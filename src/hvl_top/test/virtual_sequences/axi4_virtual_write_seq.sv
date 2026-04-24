@@ -54,21 +54,24 @@ fork
 	 		axi4_slave_bk_write_seq_h.start(p_sequencer.axi4_slave_write_seqr_h);
 		end
 	end
-	begin : T2_NBK
-		forever begin
-			 axi4_slave_nbk_write_seq_h.start(p_sequencer.axi4_slave_write_seqr_h);
+	begin : T2_BK
+		repeat(2) begin
+			 axi4_master_bk_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
 		end
 	end
-join_none 
-fork 
-    begin: T1_WRITE
-      repeat(5) begin
-        axi4_master_bk_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
-        axi4_master_nbk_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
-      end
-    end
-  join
+join
+fork
+	begin : T1_NBK
+		forever begin
+	 		axi4_slave_nbk_write_seq_h.start(p_sequencer.axi4_slave_write_seqr_h);
+		end
+	end
+	begin : T2_NBK
+		repeat(5) begin
+			 axi4_master_nbk_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
+		end
+	end
+join
  endtask : body
-
 `endif
 
