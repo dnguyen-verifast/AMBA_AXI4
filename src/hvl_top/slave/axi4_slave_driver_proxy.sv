@@ -202,13 +202,14 @@ task axi4_slave_driver_proxy::axi4_write_task();
            local_awid = response_id_queue.pop_back();
            response_id_cont_queue.push_back(local_awid);
            response_id_cont_queue.push_back(struct_write_packet.awid);
+					`uvm_info("OUT_OF_ORDER",$sformatf("Detected a same id = %d",struct_write_packet.awid),UVM_LOW);
          end
          else begin
            response_id_queue.push_back(struct_write_packet.awid);
          end
        end
      end
-
+		`uvm_info("DEBUG_QUEUE_ID",$sformatf("response id queue: %p",response_id_queue),UVM_LOW);
      //Converting struct into transaction data type
      axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_addr_tx);
      
@@ -323,17 +324,18 @@ task axi4_slave_driver_proxy::axi4_write_task();
       `uvm_info("slave_driver_proxy",$sformatf("min_tx=%0d",axi4_slave_agent_cfg_h.get_minimum_transactions),UVM_HIGH)
       if(axi4_slave_agent_cfg_h.slave_response_mode == WRITE_READ_RESP_OUT_OF_ORDER || axi4_slave_agent_cfg_h.slave_response_mode == ONLY_WRITE_RESP_OUT_OF_ORDER) begin
         wait(axi4_slave_write_data_out_fifo_h.size > axi4_slave_agent_cfg_h.get_minimum_transactions); //begin
-          `uvm_info("slave_driver_proxy",$sformatf("fifo_size = %0d",axi4_slave_write_data_out_fifo_h.used()),UVM_HIGH)
+          `uvm_info("slave_driver_proxy",$sformatf("fifo_size = %0d",axi4_slave_write_data_out_fifo_h.used()),UVM_LOW)
           if(drive_id_cont == 1) begin
             bid_local = response_id_cont_queue.pop_front(); 
-            `uvm_info("slave_driver_proxy",$sformatf("bid_local = %0d",bid_local),UVM_HIGH)
-            `uvm_info("slave_driver_proxy",$sformatf("drive_id_cont = %0d",drive_id_cont),UVM_HIGH)
+            `uvm_info("slave_driver_proxy",$sformatf("bid_local = %0d",bid_local),UVM_LOW)
+            `uvm_info("slave_driver_proxy",$sformatf("drive_id_cont = %0d",drive_id_cont),UVM_LOW)
             if(response_id_cont_queue.size()==0) drive_id_cont = 1'b0;
           end
           else begin
-            response_id_queue.shuffle();
+            //response_id_queue.shuffle();
+						`uvm_info("DEBUG_QUEUE_ID",$sformatf("response id queue: %p",response_id_queue),UVM_LOW);
             bid_local = response_id_queue.pop_front(); 
-            `uvm_info("slave_driver_proxy",$sformatf("bid_local = %0d",bid_local),UVM_HIGH)
+            `uvm_info("slave_driver_proxy",$sformatf("bid_local = %0d",bid_local),UVM_LOW)
           end
           if(axi4_slave_agent_cfg_h.read_data_mode == SLAVE_MEM_MODE || axi4_slave_agent_cfg_h.read_data_mode == SLAVE_ERR_RESP_MODE) begin
              if(!((local_slave_addr_tx.awaddr inside {[axi4_slave_agent_cfg_h.min_address :

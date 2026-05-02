@@ -32,7 +32,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_write_seq::body();
   super.body();
-
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
@@ -42,9 +41,11 @@ task axi4_master_nbk_write_seq::body();
 
     `uvm_fatal("axi4","Rand failed");
   end
+
   `uvm_info(get_type_name(), $sformatf("master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
-  
+
+
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
