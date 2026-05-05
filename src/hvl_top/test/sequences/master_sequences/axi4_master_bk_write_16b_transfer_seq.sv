@@ -38,6 +38,7 @@ task axi4_master_bk_write_16b_transfer_seq::body();
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
+															req.awaddr <= 32'hfff;
                               req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_FIXED;}) begin
     

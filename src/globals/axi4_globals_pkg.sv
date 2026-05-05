@@ -405,7 +405,7 @@ package axi4_globals_pkg;
   typedef struct {
     bit [ADDRESS_WIDTH-1:0] addr;
     bit [3:0]               id;
-  } queue_info_ctrl
+  } queue_info_ctrl_s;
 endpackage : axi4_globals_pkg
 
 `endif

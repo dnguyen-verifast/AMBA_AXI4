@@ -8,6 +8,7 @@
 class axi4_master_nbk_read_16b_transfer_seq extends axi4_master_nbk_base_seq;
   `uvm_object_utils(axi4_master_nbk_read_16b_transfer_seq)
 
+  queue_info_ctrl_s info_ctrl_h;
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -31,8 +32,7 @@ endfunction : new
 // Creates the req of type master_nbk transaction and randomises the req
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_read_16b_transfer_seq::body();
-  super.body();
-  queue_info_ctrl_s info_ctrl_h;
+	super.body();
   start_item(req);
   if(!req.randomize() with {req.araddr == info_ctrl_h.addr;
                             req.arid == info_ctrl_h.id;
