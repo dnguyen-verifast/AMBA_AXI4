@@ -16,6 +16,7 @@ class axi4_non_blocking_wrap_burst_write_test extends axi4_base_test;
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
   extern function new(string name = "axi4_non_blocking_wrap_burst_write_test", uvm_component parent = null);
+//	extern virtual function void setup_axi4_slave_agent_cfg();
   extern virtual task run_phase(uvm_phase phase);
 
 endclass : axi4_non_blocking_wrap_burst_write_test
@@ -31,7 +32,13 @@ function axi4_non_blocking_wrap_burst_write_test::new(string name = "axi4_non_bl
                                  uvm_component parent = null);
   super.new(name, parent);
 endfunction : new
-
+//function void axi4_non_blocking_wrap_burst_write_test::setup_axi4_slave_agent_cfg();
+//	super.setup_axi4_slave_agent_cfg();
+//	foreach(axi4_env_cfg_h.axi4_slave_agent_cfg_h[i]) begin
+//		axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].read_data_mode = SLAVE_MEM_MODE;
+//		`uvm_info(get_type_name(), $sformatf("read_data_mode %d  to slave set to SLAVE_MEN", i), UVM_LOW)
+//	end
+//endfunction : setup_axi4_slave_agent_cfg
 //--------------------------------------------------------------------------------------------
 // Task: run_phase
 // Creates the axi4_virtual_wrap_burst_write_seq sequence and starts the write virtual sequences
@@ -40,6 +47,10 @@ endfunction : new
 //  phase - uvm phase
 //--------------------------------------------------------------------------------------------
 task axi4_non_blocking_wrap_burst_write_test::run_phase(uvm_phase phase);
+	foreach(axi4_env_cfg_h.axi4_slave_agent_cfg_h[i]) begin
+		axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].read_data_mode = SLAVE_MEM_MODE;
+		`uvm_info(get_type_name(), $sformatf("read_data_mode %d  to slave set to SLAVE_MEN", i), UVM_LOW)
+	end
 
   axi4_virtual_nbk_wrap_burst_write_seq_h=axi4_virtual_nbk_wrap_burst_write_seq::type_id::create("axi4_virtual_nbk_wrap_burst_write_seq_h");
   `uvm_info(get_type_name(),$sformatf("axi4_non_blocking_wrap_burst_write_test"),UVM_LOW);

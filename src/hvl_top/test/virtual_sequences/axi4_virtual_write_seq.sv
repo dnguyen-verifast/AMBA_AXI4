@@ -46,8 +46,18 @@ task axi4_virtual_write_seq::body();
 
   axi4_slave_bk_write_seq_h = axi4_slave_bk_write_seq::type_id::create("axi4_slave_bk_write_seq_h");
   axi4_slave_nbk_write_seq_h = axi4_slave_nbk_write_seq::type_id::create("axi4_slave_nbk_write_seq_h");
-
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Insdie axi4_virtual_write_seq"), UVM_NONE); 
+  repeat(3) begin
+  fork
+		begin : T1_BK
+	 		axi4_slave_bk_write_seq_h.start(p_sequencer.axi4_slave_write_seqr_h);
+		end
+		begin : T2_BK
+			 axi4_master_bk_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
+		end
+	join
+end
+
 fork
 	begin : T1_NBK
 		forever begin
@@ -55,7 +65,7 @@ fork
 		end
 	end
 join_none
-		repeat(5) begin
+		repeat(10) begin
 			 axi4_master_nbk_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
 		end
 

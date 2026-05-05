@@ -169,7 +169,7 @@ task axi4_master_driver_proxy::axi4_write_task();
     //This fifo is used if the transfer_type is NON_BLOCKING_WRITE
     //Throws the error if the write fifo reaches the limit
     if(!axi4_master_write_fifo_h.is_full()) begin
-      axi4_master_write_fifo_h.write(req_wr);
+      axi4_master_write_fifo_h.put(req_wr);
     end
     else begin
       `uvm_error(get_type_name(),$sformatf("WRITE_TASK::Cannot write into FIFO as WRITE_FIFO IS FULL"));
@@ -188,11 +188,12 @@ task axi4_master_driver_proxy::axi4_write_task();
       axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
       axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
       axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
-
+			
       //Converts the struct packet to req packet
       axi4_master_seq_item_converter::to_write_class(struct_write_packet,local_master_write_tx);
       `uvm_info(get_type_name(),$sformatf("WRITE_TASK::Response Received_req_write_packet = \n %s",
                                            local_master_write_tx.sprint()),UVM_MEDIUM);
+			axi4_master_write_fifo_h.get(local_master_write_tx); // !!!!
     end
 
     //Checking if the tranfer type is non blocking write 
@@ -267,7 +268,8 @@ task axi4_master_driver_proxy::axi4_write_task();
           else begin
             `uvm_error(get_type_name(),$sformatf("WRITE_DATA_THREAD::Cannot peek into FIFO as WRITE_FIFO IS EMPTY"));
           end
-
+					`uvm_info(get_type_name(),$sformatf("WRITE_DATA_THREAD::req_write_data_packet = \n %s",
+                                               local_master_data_tx.sprint()),UVM_MEDIUM);
           //Converts the received req_packet to struct packet
           axi4_master_seq_item_converter::from_write_class(local_master_data_tx,struct_write_data_packet);
           `uvm_info(get_type_name(),$sformatf("WRITE_DATA_THREAD::Checking write data struct packet = %p",
@@ -314,7 +316,9 @@ task axi4_master_driver_proxy::axi4_write_task();
           else begin
             `uvm_error(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::Cannot peek into FIFO as WRITE_FIFO IS EMPTY"));
           end
-          
+           `uvm_info(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::get_write_tx_fifo = \n %s",
+                                               local_master_response_tx.sprint()),UVM_MEDIUM);
+
           //Converts the received req_packet to struct packet
           axi4_master_seq_item_converter::from_write_class(local_master_response_tx,struct_write_response_packet);
           `uvm_info(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::Checking struct packet = %p",
@@ -409,6 +413,7 @@ task axi4_master_driver_proxy::axi4_read_task();
       axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
 
       `uvm_info(get_type_name(),$sformatf("READ_TASK::Response_received_req_read_packet = \n %s",req_rd.sprint()),UVM_MEDIUM);
+      axi4_master_read_fifo_h.get(req_rd);
     end
 
     else if(req_rd.transfer_type ==  NON_BLOCKING_READ) begin

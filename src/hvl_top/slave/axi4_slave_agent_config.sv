@@ -42,7 +42,7 @@ class axi4_slave_agent_config extends uvm_object;
 
   //Variable: minimum_transactions
   //Used to set the minimum txns for out_of_order
-  protected bit[1:0] minimum_transactions = 2;
+  protected bit[1:0] minimum_transactions = 3;
 
   //Variable: maximum_transactions
   //Used to set the maximumm txns for out_of_order

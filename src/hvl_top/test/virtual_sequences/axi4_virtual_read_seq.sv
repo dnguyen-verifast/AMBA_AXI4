@@ -49,31 +49,24 @@ task axi4_virtual_read_seq::body();
   axi4_master_nbk_read_seq_h = axi4_master_nbk_read_seq::type_id::create("axi4_master_nbk_read_seq_h");
   axi4_slave_bk_read_seq_h = axi4_slave_bk_read_seq::type_id::create("axi4_slave_bk_read_seq_h");
   axi4_slave_nbk_read_seq_h = axi4_slave_nbk_read_seq::type_id::create("axi4_slave_nbk_read_seq_h");
-  
+  repeat(3) begin
   fork
-	begin : T1_BK
-		forever begin
+		begin : T1_BK
 	 		axi4_slave_bk_read_seq_h.start(p_sequencer.axi4_slave_read_seqr_h);
 		end
-	end
-	begin : T2_BK
-		repeat(2) begin
+		begin : T2_BK
 			 axi4_master_bk_read_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
 		end
-	end
-join
+	join
+end
 fork
-	begin : T1_NBK
 		forever begin
 	 		axi4_slave_nbk_read_seq_h.start(p_sequencer.axi4_slave_read_seqr_h);
 		end
-	end
-	begin : T2_NBK
+join_none
 		repeat(5) begin
 			 axi4_master_nbk_read_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
 		end
-	end
-join
  endtask : body
 
 `endif
