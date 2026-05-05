@@ -35,6 +35,7 @@ task axi4_master_nbk_write_incr_burst_seq::body();
 
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
+														req.awaddr <= 32'hfff;
                               req.tx_type == WRITE;
                               req.awburst == WRITE_INCR;
                               req.transfer_type == NON_BLOCKING_WRITE;}) begin

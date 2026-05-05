@@ -34,6 +34,7 @@ task axi4_master_nbk_read_wrap_burst_seq::body();
   
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
+														req.araddr <= 32'hfff;
                             req.tx_type == READ;
                             req.arburst == READ_WRAP;
                             req.transfer_type == NON_BLOCKING_READ;}) begin

@@ -85,6 +85,7 @@ function void axi4_env::build_phase(uvm_phase phase);
     if(!uvm_config_db #(axi4_slave_agent_config)::get(this,"",$sformatf("axi4_slave_agent_config[%0d]",i),axi4_slave_agent_cfg_h[i])) begin
       `uvm_fatal("FATAL_SA_AGENT_CONFIG", $sformatf("Couldn't get the axi4_slave_agent_config[%0d] from config_db",i))
     end
+//		`uvm_config_db #(axi4_slave_agent_config)::set(this,$sformatf("axi4_slave_agent_h[%0d]",i),"axi4_slave_agent_cfg", axi4_slave_agent_cfg_h[i]); // !!!!
   end
 
   axi4_master_agent_h = new[axi4_env_cfg_h.no_of_masters];
