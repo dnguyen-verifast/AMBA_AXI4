@@ -32,9 +32,11 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_read_16b_transfer_seq::body();
   super.body();
-  
+  queue_info_ctrl_s info_ctrl_h;
   start_item(req);
-  if(!req.randomize() with {req.arsize == READ_2_BYTES;
+  if(!req.randomize() with {req.araddr == info_ctrl_h.addr;
+                            req.arid == info_ctrl_h.id;
+                            req.arsize == READ_2_BYTES;
                             req.tx_type == READ;
                             req.arburst == READ_INCR;
                             req.transfer_type == NON_BLOCKING_READ;}) begin

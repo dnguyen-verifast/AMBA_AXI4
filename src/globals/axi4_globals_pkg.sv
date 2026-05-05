@@ -401,7 +401,11 @@ package axi4_globals_pkg;
     int                     outstanding_read_tx;
     response_mode_e         slave_response_mode;
   } axi4_transfer_cfg_s;
-
+ 
+  typedef struct {
+    bit [ADDRESS_WIDTH-1:0] addr;
+    bit [3:0]               id;
+  } queue_info_ctrl_s;
 endpackage : axi4_globals_pkg
 
 `endif

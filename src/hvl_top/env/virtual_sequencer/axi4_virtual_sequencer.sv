@@ -24,6 +24,7 @@ class axi4_virtual_sequencer extends uvm_sequencer#(uvm_sequence_item);
   // Declaring slave read sequencer handle
   axi4_slave_read_sequencer axi4_slave_read_seqr_h;
 
+  queue_info_ctrl_s queue_info_ctrl[$];
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
