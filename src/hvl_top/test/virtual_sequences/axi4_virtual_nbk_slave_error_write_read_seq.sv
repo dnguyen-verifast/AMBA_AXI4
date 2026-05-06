@@ -74,8 +74,8 @@ task axi4_virtual_nbk_slave_error_write_read_seq::body();
     begin: T1_WRITE
       repeat(2) begin
         axi4_master_nbk_write_slave_error_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
-        queue_info_ctrl_h.addr = axi4_master_nbk_write_slave_error_seq_h.seq.awaddr; 
-        queue_info_ctrl_h.id = axi4_master_nbk_write_slave_error_seq_h.seq.awid;
+        queue_info_ctrl_h.addr = axi4_master_nbk_write_slave_error_seq_h.req.awaddr; 
+        queue_info_ctrl_h.id = axi4_master_nbk_write_slave_error_seq_h.req.awid;
         p_sequencer.queue_info_ctrl.push_back(queue_info_ctrl_h);
       end
     end

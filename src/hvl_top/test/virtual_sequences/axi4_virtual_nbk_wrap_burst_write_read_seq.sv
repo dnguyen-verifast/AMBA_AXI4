@@ -80,8 +80,7 @@ task axi4_virtual_nbk_wrap_burst_write_read_seq::body();
       end
     end
     begin: T2_READ
-      repeat(3) begin
-        
+      repeat(3) begin       
 				queue_info_ctrl_h1 = p_sequencer.queue_info_ctrl.pop_front();
         axi4_master_nbk_read_wrap_burst_seq_h.queue_info_ctrl_r.addr = queue_info_ctrl_h1.addr;
         axi4_master_nbk_read_wrap_burst_seq_h.queue_info_ctrl_r.id = queue_info_ctrl_h1.id;
@@ -93,3 +92,4 @@ task axi4_virtual_nbk_wrap_burst_write_read_seq::body();
 
 `endif
 
+ 

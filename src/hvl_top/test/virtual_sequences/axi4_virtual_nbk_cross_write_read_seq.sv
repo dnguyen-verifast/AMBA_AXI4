@@ -81,9 +81,9 @@ task axi4_virtual_nbk_cross_write_read_seq::body();
     end
     begin: T2_READ
       repeat(1) begin
-        queue_info_ctrl_h1 = p_sequencer.queue_info_ctrl.pop_front();
-        axi4_master_nbk_read_cross_seq_h.queue_info_ctrl_r.addr = queue_info_ctrl_h1.addr;
-        axi4_master_nbk_read_cross_seq_h.queue_info_ctrl_r.id = queue_info_ctrl_h1.id;
+        //queue_info_ctrl_h1 = p_sequencer.queue_info_ctrl.pop_front();
+        //axi4_master_nbk_read_cross_seq_h.queue_info_ctrl_r.addr = queue_info_ctrl_h1.addr;
+        //axi4_master_nbk_read_cross_seq_h.queue_info_ctrl_r.id = queue_info_ctrl_h1.id;
         axi4_master_nbk_read_cross_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
       end
     end
