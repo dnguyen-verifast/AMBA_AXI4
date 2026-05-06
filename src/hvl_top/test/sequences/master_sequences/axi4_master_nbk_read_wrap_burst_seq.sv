@@ -6,7 +6,7 @@
 //--------------------------------------------------------------------------------------------
 class axi4_master_nbk_read_wrap_burst_seq extends axi4_master_nbk_base_seq;
   `uvm_object_utils(axi4_master_nbk_read_wrap_burst_seq)
-  rand queue_info_ctrl_s queue_info_ctrl_r;
+  queue_info_ctrl_s queue_info_ctrl_r;
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -33,9 +33,6 @@ task axi4_master_nbk_read_wrap_burst_seq::body();
   super.body();
   
   start_item(req);
-  if(!queue_info_ctrl_r.randomize() with {queue_info_ctrl_r.addr <= 32'hfff;}) begin
-    `uvm_fatal("axi4","Rand failed for queue_info_ctrl_r");
-  end
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.araddr == queue_info_ctrl_r.addr;
                             req.arid == queue_info_ctrl_r.id;
