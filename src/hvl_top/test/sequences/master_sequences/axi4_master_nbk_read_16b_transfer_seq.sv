@@ -49,4 +49,3 @@ task axi4_master_nbk_read_16b_transfer_seq::body();
 endtask : body
 
 `endif
-

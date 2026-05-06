@@ -7,7 +7,7 @@
 //--------------------------------------------------------------------------------------------
 class axi4_master_nbk_read_unaligned_addr_seq extends axi4_master_nbk_base_seq;
   `uvm_object_utils(axi4_master_nbk_read_unaligned_addr_seq)
-
+  queue_info_ctrl_s queue_info_ctrl_r;
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -35,9 +35,11 @@ task axi4_master_nbk_read_unaligned_addr_seq::body();
 
   start_item(req);
   if(!req.randomize() with {req.araddr % 4 !=0;
-                              req.tx_type == READ;
-                              req.arburst == READ_FIXED;
-                              req.transfer_type == NON_BLOCKING_READ;}) begin
+                            req.araddr == queue_info_ctrl_r.addr;
+                            req.arid == queue_info_ctrl_r.id;
+                            req.tx_type == READ;
+                            req.arburst == READ_FIXED;
+                            req.transfer_type == NON_BLOCKING_READ;}) begin
     `uvm_fatal("axi4","Rand failed");
   end
   

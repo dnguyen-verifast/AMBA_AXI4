@@ -37,6 +37,7 @@ task axi4_master_nbk_write_unaligned_addr_seq::body();
   start_item(req);
   if(!req.randomize() with {
                              req.awsize == WRITE_2_BYTES;
+                             req.awaddr <= 32'hfff;
                              req.awaddr%2 != 0; // !!!! fix awaddr==req.awaddr % (2**req.awsize) != 0; to below 
                              req.awburst == WRITE_FIXED;
                              req.awlen == 5; //!!!! [2:0] awlen so that should be set awlen <= 7

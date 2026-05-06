@@ -47,6 +47,7 @@ endfunction : new
 // Creates and starts the data of master and slave sequences
 //--------------------------------------------------------------------------------------------
 task axi4_virtual_nbk_outstanding_transfer_write_read_seq::body();
+  queue_info_ctrl_s queue_info_ctrl_h, queue_info_ctrl_h1;
   axi4_master_nbk_write_outstanding_transfer_seq_h = axi4_master_nbk_write_outstanding_transfer_seq::type_id::create("axi4_master_nbk_write_outstanding_transfer_seq_h");
 
   axi4_master_nbk_read_outstanding_transfer_seq_h = axi4_master_nbk_read_outstanding_transfer_seq::type_id::create("axi4_master_nbk_read_outstanding_transfer_seq_h");
@@ -73,10 +74,16 @@ task axi4_virtual_nbk_outstanding_transfer_write_read_seq::body();
     begin: T1_WRITE
       repeat(5) begin
         axi4_master_nbk_write_outstanding_transfer_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
+        queue_info_ctrl_h.addr = axi4_master_nbk_write_outstanding_transfer_seq_h.req.awaddr;
+        queue_info_ctrl_h.id = axi4_master_nbk_write_outstanding_transfer_seq_h.req.awid;
+        p_sequencer.queue_info_ctrl.push_back(queue_info_ctrl_h);
       end
     end
     begin: T2_READ
       repeat(7) begin
+        queue_info_ctrl_h1 = p_sequencer.queue_info_ctrl.pop_front();
+        axi4_master_nbk_read_outstanding_transfer_seq_h.queue_info_ctrl_r.addr = queue_info_ctrl_h1.addr;
+        axi4_master_nbk_read_outstanding_transfer_seq_h.queue_info_ctrl_r.id = queue_info_ctrl_h1.id;
         axi4_master_nbk_read_outstanding_transfer_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
       end
     end

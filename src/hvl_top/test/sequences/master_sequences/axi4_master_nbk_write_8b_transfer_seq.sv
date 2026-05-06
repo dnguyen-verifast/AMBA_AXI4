@@ -7,7 +7,6 @@
 //--------------------------------------------------------------------------------------------
 class axi4_master_nbk_write_8b_transfer_seq extends axi4_master_nbk_base_seq;
   `uvm_object_utils(axi4_master_nbk_write_8b_transfer_seq)
-
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -32,11 +31,11 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_write_8b_transfer_seq::body();
   super.body();
-
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_1_BYTE;
+                              req.awaddr <= 32'hfff;
                               req.tx_type == WRITE;
-                              req.awburst == WRITE_FIXED;
+                              req.awburst = WRITE_WRAP;
                               req.transfer_type == NON_BLOCKING_WRITE;}) begin
     `uvm_fatal("axi4","Rand failed");
   end

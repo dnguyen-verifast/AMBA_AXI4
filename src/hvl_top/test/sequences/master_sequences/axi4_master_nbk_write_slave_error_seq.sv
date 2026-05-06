@@ -35,6 +35,7 @@ task axi4_master_nbk_write_slave_error_seq::body();
  
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_4_BYTES; // !!!! 8 -> 4 
+                              req.awaddr <= 32'hfff;
                               req.tx_type == WRITE;
                               req.awburst == WRITE_FIXED;
                               req.transfer_type == NON_BLOCKING_WRITE;}) begin

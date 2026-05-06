@@ -48,4 +48,3 @@ task axi4_master_nbk_write_16b_transfer_seq::body();
 endtask : body
 
 `endif
-

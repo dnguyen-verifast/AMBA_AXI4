@@ -7,7 +7,7 @@
 //--------------------------------------------------------------------------------------------
 class axi4_master_nbk_read_slave_error_seq extends axi4_master_nbk_base_seq;
   `uvm_object_utils(axi4_master_nbk_read_slave_error_seq)
-
+  queue_info_ctrl_s queue_info_ctrl_r;
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -34,7 +34,9 @@ task axi4_master_nbk_read_slave_error_seq::body();
   super.body();
   
   start_item(req);
-  if(!req.randomize() with {req.arsize == READ_8_BYTES;
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
+                            req.araddr == queue_info_ctrl_r.addr;
+                            req.arid == queue_info_ctrl_r.id;           
                             req.tx_type == READ;
                             req.arburst == READ_INCR;
                             req.transfer_type == NON_BLOCKING_READ;}) begin

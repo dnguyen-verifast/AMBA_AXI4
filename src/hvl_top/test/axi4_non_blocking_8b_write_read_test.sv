@@ -16,6 +16,7 @@ class axi4_non_blocking_8b_write_read_test extends axi4_base_test;
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
   extern function new(string name = "axi4_non_blocking_8b_write_read_test", uvm_component parent = null);
+  extern virtual function void setup_axi4_slave_agent_cfg();
   extern virtual task run_phase(uvm_phase phase);
 
 endclass : axi4_non_blocking_8b_write_read_test
@@ -32,6 +33,13 @@ function axi4_non_blocking_8b_write_read_test::new(string name = "axi4_non_block
   super.new(name, parent);
 endfunction : new
 
+
+function void axi4_non_blocking_8b_write_read_test::setup_axi4_slave_agent_cfg();
+  super.setup_axi4_slave_agent_cfg();
+  foreach(axi4_env_cfg_h.axi4_slave_agent_cfg_h[i]) begin
+    axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].read_data_mode = SLAVE_MEM_MODE;
+  end
+endfunction : setup_axi4_slave_agent_cfg
 //--------------------------------------------------------------------------------------------
 // Task: run_phase
 // Creates the axi4_virtual_8b_write_read_seq sequence and starts the write and read virtual sequences
