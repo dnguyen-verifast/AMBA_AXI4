@@ -6877,13 +6877,13 @@ b5666:[{dummy:0},
 ,{cr:'m',t:'I',z:'  if(!req.randomize() with {req.awsize == WRITE_2_BYTES;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'36',h:'0',c:'r'}
 ,{cr:'m',t:'A',z:'  if(!req.randomize() with {req.awsize == WRITE_2_BYTES;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'36',h:'0',c:'r'}
 ]},
-{anchor:'cvg5668',items:[{z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'42',c:'R',p:'0.00'}
-,{cr:'m',t:'I',z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'42',h:'0',c:'r'}
-,{cr:'m',t:'A',z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'42',h:'0',c:'r'}
+{anchor:'cvg5668',items:[{z:'',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'42',c:'R',p:'0.00'}
+,{cr:'m',t:'I',z:'',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'42',h:'0',c:'r'}
+,{cr:'m',t:'A',z:'',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'42',h:'0',c:'r'}
 ]},
-{anchor:'cvg5669',items:[{z:'  `uvm_info(get_type_name(), $sformatf(&#34;master_seq \\n%s&#34;,req.sprint()), U...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'45',c:'R',p:'0.00'}
-,{cr:'m',t:'I',z:'  `uvm_info(get_type_name(), $sformatf(&#34;master_seq \\n%s&#34;,req.sprint()), U...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'45',h:'0',c:'r'}
-,{cr:'m',t:'A',z:'  `uvm_info(get_type_name(), $sformatf(&#34;master_seq \\n%s&#34;,req.sprint()), U...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'45',h:'0',c:'r'}
+{anchor:'cvg5669',items:[{z:'',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'45',c:'R',p:'0.00'}
+,{cr:'m',t:'I',z:'',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'45',h:'0',c:'r'}
+,{cr:'m',t:'A',z:'',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_seq.sv',l:'45',h:'0',c:'r'}
 ]}],
 b5674:[{dummy:0},
 {anchor:'cvg5675',items:[{z:'  `uvm_object_utils(axi4_master_nbk_read_seq)',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_read_seq.sv',l:'9',c:'R',p:'0.00'}
@@ -6912,9 +6912,9 @@ b5682:[{dummy:0},
 ,{cr:'m',t:'I',z:'  if(!req.randomize() with {req.arsize == READ_4_BYTES;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_read_seq.sv',l:'37',h:'0',c:'r'}
 ,{cr:'m',t:'A',z:'  if(!req.randomize() with {req.arsize == READ_4_BYTES;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_read_seq.sv',l:'37',h:'0',c:'r'}
 ]},
-{anchor:'cvg5684',items:[{z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_read_seq.sv',l:'42',c:'R',p:'0.00'}
-,{cr:'m',t:'I',z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_read_seq.sv',l:'42',h:'0',c:'r'}
-,{cr:'m',t:'A',z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_read_seq.sv',l:'42',h:'0',c:'r'}
+{anchor:'cvg5684',items:[{z:'                            }) begin',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_read_seq.sv',l:'42',c:'R',p:'0.00'}
+,{cr:'m',t:'I',z:'                            }) begin',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_read_seq.sv',l:'42',h:'0',c:'r'}
+,{cr:'m',t:'A',z:'                            }) begin',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_read_seq.sv',l:'42',h:'0',c:'r'}
 ]}],
 b5689:[{dummy:0},
 {anchor:'cvg5690',items:[{z:'  `uvm_object_utils(axi4_master_bk_write_8b_transfer_seq)',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_bk_write_8b_transfer_seq.sv',l:'9',c:'R',p:'0.00'}
@@ -7541,17 +7541,17 @@ b5944:[{dummy:0},
 ,{cr:'m',t:'A',z:'  `uvm_object_utils(axi4_master_nbk_write_8b_transfer_seq)',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'9',h:'0',c:'r'}
 ]}],
 b5949:[{dummy:0},
-{anchor:'cvg5950',items:[{z:'  if(!req.randomize() with {req.awsize == WRITE_1_BYTE;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'37',c:'R',p:'0.00'}
-,{cr:'m',t:'I',z:'  if(!req.randomize() with {req.awsize == WRITE_1_BYTE;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'37',h:'0',c:'r'}
-,{cr:'m',t:'A',z:'  if(!req.randomize() with {req.awsize == WRITE_1_BYTE;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'37',h:'0',c:'r'}
+{anchor:'cvg5950',items:[{z:'                              req.tx_type == WRITE;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'37',c:'R',p:'0.00'}
+,{cr:'m',t:'I',z:'                              req.tx_type == WRITE;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'37',h:'0',c:'r'}
+,{cr:'m',t:'A',z:'                              req.tx_type == WRITE;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'37',h:'0',c:'r'}
 ]},
-{anchor:'cvg5951',items:[{z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'41',c:'R',p:'0.00'}
-,{cr:'m',t:'I',z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'41',h:'0',c:'r'}
-,{cr:'m',t:'A',z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'41',h:'0',c:'r'}
+{anchor:'cvg5951',items:[{z:'  end',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'41',c:'R',p:'0.00'}
+,{cr:'m',t:'I',z:'  end',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'41',h:'0',c:'r'}
+,{cr:'m',t:'A',z:'  end',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'41',h:'0',c:'r'}
 ]},
-{anchor:'cvg5952',items:[{z:'  `uvm_info(get_type_name(), $sformatf(&#34;DEBUG_MSHA :: master_seq \\n%s&#34;...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'44',c:'R',p:'0.00'}
-,{cr:'m',t:'I',z:'  `uvm_info(get_type_name(), $sformatf(&#34;DEBUG_MSHA :: master_seq \\n%s&#34;...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'44',h:'0',c:'r'}
-,{cr:'m',t:'A',z:'  `uvm_info(get_type_name(), $sformatf(&#34;DEBUG_MSHA :: master_seq \\n%s&#34;...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'44',h:'0',c:'r'}
+{anchor:'cvg5952',items:[{z:'  finish_item(req);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'44',c:'R',p:'0.00'}
+,{cr:'m',t:'I',z:'  finish_item(req);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'44',h:'0',c:'r'}
+,{cr:'m',t:'A',z:'  finish_item(req);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_8b_transfer_seq.sv',l:'44',h:'0',c:'r'}
 ]}],
 b5957:[{dummy:0},
 {anchor:'cvg5958',items:[{z:'  `uvm_object_utils(axi4_master_nbk_write_16b_transfer_seq)',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_16b_transfer_seq.sv',l:'9',c:'R',p:'0.00'}
@@ -7623,13 +7623,13 @@ b5983:[{dummy:0},
 ,{cr:'m',t:'I',z:'  if(!req.randomize() with {req.awsize == WRITE_4_BYTES;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'37',h:'0',c:'r'}
 ,{cr:'m',t:'A',z:'  if(!req.randomize() with {req.awsize == WRITE_4_BYTES;',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'37',h:'0',c:'r'}
 ]},
-{anchor:'cvg5985',items:[{z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'41',c:'R',p:'0.00'}
-,{cr:'m',t:'I',z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'41',h:'0',c:'r'}
-,{cr:'m',t:'A',z:'    `uvm_fatal(&#34;axi4&#34;,&#34;Rand failed&#34;);',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'41',h:'0',c:'r'}
+{anchor:'cvg5985',items:[{z:'                              req.transfer_type == NON_BLOCKING_WRITE;}) ...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'41',c:'R',p:'0.00'}
+,{cr:'m',t:'I',z:'                              req.transfer_type == NON_BLOCKING_WRITE;}) ...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'41',h:'0',c:'r'}
+,{cr:'m',t:'A',z:'                              req.transfer_type == NON_BLOCKING_WRITE;}) ...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'41',h:'0',c:'r'}
 ]},
-{anchor:'cvg5986',items:[{z:'  `uvm_info(get_type_name(), $sformatf(&#34;DEBUG_MSHA :: master_seq \\n%s&#34;...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'44',c:'R',p:'0.00'}
-,{cr:'m',t:'I',z:'  `uvm_info(get_type_name(), $sformatf(&#34;DEBUG_MSHA :: master_seq \\n%s&#34;...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'44',h:'0',c:'r'}
-,{cr:'m',t:'A',z:'  `uvm_info(get_type_name(), $sformatf(&#34;DEBUG_MSHA :: master_seq \\n%s&#34;...',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'44',h:'0',c:'r'}
+{anchor:'cvg5986',items:[{z:'  ',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'44',c:'R',p:'0.00'}
+,{cr:'m',t:'I',z:'  ',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'44',h:'0',c:'r'}
+,{cr:'m',t:'A',z:'  ',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_32b_transfer_seq.sv',l:'44',h:'0',c:'r'}
 ]}],
 b5991:[{dummy:0},
 {anchor:'cvg5992',items:[{z:'  `uvm_object_utils(axi4_master_nbk_write_64b_transfer_seq)',f:'../../src/hvl_top/test/sequences/master_sequences//axi4_master_nbk_write_64b_transfer_seq.sv',l:'9',c:'R',p:'0.00'}
