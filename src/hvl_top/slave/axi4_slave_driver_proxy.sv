@@ -283,7 +283,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
       //returns status of response thread
       response_tx=process::self();
 
-      data_tx.await();
+      wait(axi4_slave_write_data_out_fifo_h.used()>0);
       
       //getting the key from semaphore 
       semaphore_rsp_write_key.get(1);
