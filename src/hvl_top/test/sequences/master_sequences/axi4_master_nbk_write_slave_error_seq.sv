@@ -37,7 +37,7 @@ task axi4_master_nbk_write_slave_error_seq::body();
   if(!req.randomize() with {req.awsize == WRITE_4_BYTES; // !!!! 8 -> 4 
                               req.awaddr <= 32'hfff;
                               req.tx_type == WRITE;
-                              req.awburst == WRITE_FIXED;
+                              req.awburst == WRITE_INCR;
                               req.transfer_type == NON_BLOCKING_WRITE;}) begin
     `uvm_fatal("axi4","Rand failed");
   end

@@ -72,7 +72,7 @@ task axi4_virtual_nbk_fixed_burst_write_read_seq::body();
 
   fork 
     begin: T1_WRITE_READ
-      repeat(2) begin
+      repeat(3) begin
         axi4_master_nbk_write_fixed_burst_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
         queue_info_ctrl_h.addr = axi4_master_nbk_write_fixed_burst_seq_h.req.awaddr;
         queue_info_ctrl_h.id = axi4_master_nbk_write_fixed_burst_seq_h.req.awid;

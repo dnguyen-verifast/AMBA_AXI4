@@ -551,7 +551,8 @@ task axi4_slave_driver_proxy::axi4_read_task();
           `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: READ_CHANNEL_PACKET \n%p",struct_read_packet), UVM_NONE);
         end
         else if(local_slave_addr_chk_tx.arburst == READ_WRAP || local_slave_addr_chk_tx.arburst == READ_INCR) begin
-          if(axi4_slave_mem_h.is_slave_addr_exists(local_slave_addr_chk_tx.araddr)) begin 
+          if(axi4_slave_mem_h.is_slave_addr_exists(local_slave_addr_chk_tx.araddr)) begin
+						`uvm_info(get_type_name(),$sformatf("local_slave_addr_chk_tx",local_slave_addr_chk_tx.sprint()),UVM_LOW); 
             task_memory_read(local_slave_addr_chk_tx,struct_read_packet);
             for(int j=0,int loc=0;j<total_bytes;j++) begin
               if((local_slave_addr_chk_tx.araddr+j)==crossed_read_addr) begin
@@ -668,7 +669,7 @@ task axi4_slave_driver_proxy::task_memory_write(inout axi4_slave_tx struct_write
             axi4_slave_mem_h.mem_write(struct_write_packet.awaddr+k,struct_write_packet.wdata[j][8*strb+7 -: 8]);
             k++;
             k_t++;
-            if(k_t == end_addr) k = k_scale; //!!!!
+            if(k_t == end_addr) k = 0; //!!!!
           end
           else begin
       			`uvm_info("ADDRESS_MEMORY_WRITE",$sformatf("memory_task_awaddr=%d data=%h",struct_write_packet.awaddr+k, struct_write_packet.wdata[j][8*strb+7 -: 8]),UVM_NONE)
@@ -725,7 +726,7 @@ task axi4_slave_driver_proxy::task_memory_read(input axi4_slave_tx read_pkt,outp
              if(read_pkt.araddr+k > axi4_slave_agent_cfg_h.max_address) crossed_read_addr = read_pkt.araddr+k;
              k++;
              k_t++;
-             if(k_t == end_addr) k = k_rstat;
+             if(k_t == end_addr) k = 0;
           end
           else begin
             axi4_slave_mem_h.mem_read(lower_addr+k,struct_read_packet.rdata[j][8*strb+7 -: 8]);
