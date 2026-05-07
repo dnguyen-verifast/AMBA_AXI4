@@ -81,6 +81,7 @@ task axi4_virtual_nbk_okay_response_write_read_seq::body();
     end
     begin: T2_READ
       repeat(3) begin
+        wait(p_sequencer.queue_info_ctrl.size() > 0); 
         queue_info_ctrl_h1 = p_sequencer.queue_info_ctrl.pop_front();
         axi4_master_nbk_read_okay_resp_seq_h.queue_info_ctrl_r.addr = queue_info_ctrl_h1.addr;
         axi4_master_nbk_read_okay_resp_seq_h.queue_info_ctrl_r.id = queue_info_ctrl_h1.id;

@@ -72,7 +72,7 @@ task axi4_virtual_nbk_outstanding_transfer_write_read_seq::body();
 
   fork 
     begin: T1_WRITE
-      repeat(5) begin
+      repeat(7) begin
         axi4_master_nbk_write_outstanding_transfer_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
         queue_info_ctrl_h.addr = axi4_master_nbk_write_outstanding_transfer_seq_h.req.awaddr;
         queue_info_ctrl_h.id = axi4_master_nbk_write_outstanding_transfer_seq_h.req.awid;
@@ -81,6 +81,7 @@ task axi4_virtual_nbk_outstanding_transfer_write_read_seq::body();
     end
     begin: T2_READ
       repeat(7) begin
+        wait(p_sequencer.queue_info_ctrl.size() > 0); 
         queue_info_ctrl_h1 = p_sequencer.queue_info_ctrl.pop_front();
         axi4_master_nbk_read_outstanding_transfer_seq_h.queue_info_ctrl_r.addr = queue_info_ctrl_h1.addr;
         axi4_master_nbk_read_outstanding_transfer_seq_h.queue_info_ctrl_r.id = queue_info_ctrl_h1.id;

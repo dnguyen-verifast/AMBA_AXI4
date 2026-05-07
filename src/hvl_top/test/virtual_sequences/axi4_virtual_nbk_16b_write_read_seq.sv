@@ -68,18 +68,25 @@ task axi4_virtual_nbk_16b_write_read_seq::body();
       end
     end
   join_none
+  fork
+  begin: T1_WRITE
     repeat(2) begin
         axi4_master_nbk_write_16b_transfer_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
         queue_info_ctrl_h.addr = axi4_master_nbk_write_16b_transfer_seq_h.req.awaddr;
         queue_info_ctrl_h.id = axi4_master_nbk_write_16b_transfer_seq_h.req.awid;
         p_sequencer.queue_info_ctrl.push_back(queue_info_ctrl_h);
       end
+  end
+    begin: T2_READ
       repeat(2) begin
+        wait(p_sequencer.queue_info_ctrl.size() > 0); 
         queue_info_ctrl_h1 = p_sequencer.queue_info_ctrl.pop_front();
         axi4_master_nbk_read_16b_transfer_seq_h.info_ctrl_h.addr = queue_info_ctrl_h1.addr;
         axi4_master_nbk_read_16b_transfer_seq_h.info_ctrl_h.id= queue_info_ctrl_h1.id;
         axi4_master_nbk_read_16b_transfer_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
       end
+    end
+  join
  endtask : body
 
 `endif
