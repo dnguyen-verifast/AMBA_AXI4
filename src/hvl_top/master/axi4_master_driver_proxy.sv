@@ -33,6 +33,7 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   //Declaring handle for uvm_tlm_analysis_fifo for write task
   uvm_tlm_analysis_fifo #(axi4_master_tx) axi4_master_write_fifo_h;
   
+  uvm_tlm_analysis_fifo #(axi4_master_tx) axi4_master_write_data_fifo_h;
   //Variable: axi4_master_read_fifo_h
   //Declaring handle for uvm_tlm_analysis_fifo for read task
   uvm_tlm_analysis_fifo #(axi4_master_tx) axi4_master_read_fifo_h;
@@ -97,6 +98,7 @@ function axi4_master_driver_proxy::new(string name = "axi4_master_driver_proxy",
   axi_write_rsp_port         = new("axi_write_rsp_port",this);
   axi_read_rsp_port          = new("axi_read_rsp_port",this);
   axi4_master_write_fifo_h   = new("axi4_master_write_fifo_h",this);
+	axi4_master_write_data_fifo_h = new("axi4_master_write_data_fifo_h",this);
   axi4_master_read_fifo_h    = new("axi4_master_read_fifo_h",this);
   read_channel_key           = new(1);
   write_data_channel_key     = new(1);
@@ -170,6 +172,7 @@ task axi4_master_driver_proxy::axi4_write_task();
     //Throws the error if the write fifo reaches the limit
     if(!axi4_master_write_fifo_h.is_full()) begin
       axi4_master_write_fifo_h.put(req_wr);
+			axi4_master_write_data_fifo_h.put(req_wr);
     end
     else begin
       `uvm_error(get_type_name(),$sformatf("WRITE_TASK::Cannot write into FIFO as WRITE_FIFO IS FULL"));
@@ -262,8 +265,8 @@ task axi4_master_driver_proxy::axi4_write_task();
          
           //Peek method gets the packet from the fifo but the fifo doesn't discard the packet
           //It throws an error if peek is done into an empty fifo
-          if(!axi4_master_write_fifo_h.is_empty()) begin
-            axi4_master_write_fifo_h.peek(local_master_data_tx);
+          if(!axi4_master_write_data_fifo_h.is_empty()) begin
+            axi4_master_write_data_fifo_h.get(local_master_data_tx);
           end
           else begin
             `uvm_error(get_type_name(),$sformatf("WRITE_DATA_THREAD::Cannot peek into FIFO as WRITE_FIFO IS EMPTY"));

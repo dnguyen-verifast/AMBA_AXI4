@@ -283,10 +283,13 @@ task axi4_slave_driver_proxy::axi4_write_task();
       //returns status of response thread
       response_tx=process::self();
 
-      wait(axi4_slave_write_data_out_fifo_h.used()>0);
+      semaphore_rsp_write_key.get(1);
+		
+     // axi4_slave_write_data_out_fifo_h.peek(local_slave_data_tx);
+   //   wait(axi4_slave_write_data_out_fifo_h.used()>0);
+			data_tx.await();
       
       //getting the key from semaphore 
-      semaphore_rsp_write_key.get(1);
 
       //getting the data from response fifo
       axi4_slave_write_response_fifo_h.get(local_slave_response_tx);
@@ -369,8 +372,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_response_tx);
 
      `uvm_info("DEBUG_SLAVE_WDATA_PROXY_TO_CLASS", $sformatf("AFTER TO CLASS :: Received req packet \n %s", local_slave_response_tx.sprint()), UVM_NONE);
-     
-
+  
       axi4_slave_write_data_out_fifo_h.get(local_slave_data_tx);
 
      //Calling combined data packet from converter class
