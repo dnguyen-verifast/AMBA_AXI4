@@ -29,6 +29,8 @@
 ../../src/hvl_top/slave/axi4_slave_cfg_converter.sv
 ../../src/hvl_top/slave/axi4_slave_coverage.sv
 ../../src/hvl_top/slave/axi4_slave_driver_proxy.sv
+../../src/hvl_top/slave/axi4_slave_mem_map_cfg.sv
+../../src/hvl_top/slave/axi4_slave_mem_region_cfg.sv
 ../../src/hvl_top/slave/axi4_slave_memory.sv
 ../../src/hvl_top/slave/axi4_slave_monitor_proxy.sv
 ../../src/hvl_top/slave/axi4_slave_pkg.sv

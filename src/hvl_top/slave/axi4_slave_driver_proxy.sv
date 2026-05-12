@@ -131,6 +131,7 @@ function void axi4_slave_driver_proxy::end_of_elaboration_phase(uvm_phase phase)
   super.end_of_elaboration_phase(phase);
   if(axi4_slave_agent_cfg_h.read_data_mode == SLAVE_MEM_MODE) begin
     axi4_slave_mem_h = axi4_slave_memory::type_id::create("axi4_slave_mem_h");
+		axi4_slave_mem_h.init_memory_cfg();
   end
   axi4_slave_drv_bfm_h.axi4_slave_drv_proxy_h= this;
 endfunction  : end_of_elaboration_phase
@@ -368,10 +369,10 @@ task axi4_slave_driver_proxy::axi4_write_task();
             //  if(!((local_slave_addr_tx.awaddr inside {[axi4_slave_agent_cfg_h.min_address :
             //    axi4_slave_agent_cfg_h.max_address]}) && (end_wrap_addr inside
             //    {[axi4_slave_agent_cfg_h.min_address : axi4_slave_agent_cfg_h.max_address]}))) begin
-            slave_err = axi4_slave_memory_h.check_access_permission(local_slave_addr_tx.awaddr, 
-                                                        local_slave_addr_tx.awregion, 
-                                                        local_slave_addr_tx.awprot, 
-                                                        local_slave_addr_tx.awlock, 1'b1);
+            slave_err = axi4_slave_mem_h.check_access_permission(local_slave_addr_tx.awaddr, 
+                                                        region_e'(local_slave_addr_tx.awregion), 
+                                                        prot_e'(local_slave_addr_tx.awprot), 
+                                                        lock_e'(local_slave_addr_tx.awlock), 1'b1);
             local_slave_addr_tx.bresp = (slave_err == 2)? WRITE_SLVERR 
                                           : ((violation_addr == 1)? ((local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_OKAY : WRITE_EXOKAY) 
                                             : (local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_EXOKAY : WRITE_OKAY);
@@ -388,11 +389,12 @@ task axi4_slave_driver_proxy::axi4_write_task();
           //   struct_write_packet.bresp = WRITE_SLVERR;
           //   slave_err = 1;
           // end
-          slave_err = axi4_slave_memory_h.check_access_permission(local_slave_addr_tx.awaddr, 
-                                                        local_slave_addr_tx.awregion, 
-                                                        local_slave_addr_tx.awprot, 
-                                                        local_slave_addr_tx.awlock, 1'b1);
-          local_slave_addr_tx.bresp = (slave_err == 2)? WRITE_SLVERR 
+             slave_err = axi4_slave_mem_h.check_access_permission(local_slave_addr_tx.awaddr, 
+                                                        region_e'(local_slave_addr_tx.awregion), 
+                                                        prot_e'(local_slave_addr_tx.awprot), 
+                                                        lock_e'(local_slave_addr_tx.awlock), 1'b1);      
+
+				local_slave_addr_tx.bresp = (slave_err == 2)? WRITE_SLVERR 
                                         : ((violation_addr == 1)? ((local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_OKAY : WRITE_EXOKAY) 
                                           : (local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_EXOKAY : WRITE_OKAY); 
         // write response_task

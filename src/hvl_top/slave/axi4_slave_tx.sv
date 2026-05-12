@@ -117,7 +117,6 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Used to send the  write address lock
   rand arlock_e arlock;
 	
-	rand arregion_e arregion;
   //Variable : awcache
   //Used to send the write address cache
   rand arcache_e arcache;
@@ -128,8 +127,8 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : arregion
   //Used to accept the address region
-  bit arregion;
-  
+  rand arregion_e arregion;
+
   //Variable : arqos
   //Used to send the read address quality of service
   rand bit arqos;

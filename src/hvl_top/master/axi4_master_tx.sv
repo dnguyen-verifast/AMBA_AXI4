@@ -53,7 +53,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : awregion
   //Used to send the write address region selected
-  rand bit [3:0] awregion;
+  rand awregion_e awregion;
 
   //Variable : awuser
   //Used to send the write address user
@@ -142,7 +142,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : arregion
   //Used to send the read address region data
-  rand bit arregion;
+  rand arregion_e arregion;
 
   //-------------------------------------------------------
   // READ DATA CHANNEL SIGNALS 
@@ -216,6 +216,7 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   // WRITE ADDRESS Constraints
   //-------------------------------------------------------
+	constraint awregion_c0 {soft awregion inside {[0:3]};}
   //Constraint : awaddr
   //Used to generate the alligned address with respect to size
   constraint awaddr_c0 {soft awaddr%(2**awsize) == 0;}
@@ -734,6 +735,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_string("awburst",awburst.name());
     printer.print_string("awlock",awlock.name());
     printer.print_string("awcache",awcache.name());
+    printer.print_string("awregion",awregion.name());
     printer.print_string("awprot",awprot.name());
     printer.print_field("awqos",awqos,$bits(awqos),UVM_HEX);
     printer.print_field("wait_count_write_address_channel",wait_count_write_address_channel,
@@ -764,6 +766,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_string("arsize",arsize.name());
     printer.print_string("arburst",arburst.name());
     printer.print_string("arlock",arlock.name());
+    printer.print_string("arregion",arregion.name());
     printer.print_string("arcache",arcache.name());
     printer.print_string("arprot",arprot.name());
     printer.print_field("arqos",arqos,$bits(arqos),UVM_HEX);
