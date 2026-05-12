@@ -18,6 +18,9 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
                                 input [1: 0]              awlock  ,
                                 input [1: 0]              awcache ,
                                 input [2: 0]              awprot  ,
+                                input [3: 0]              awqos   ,
+                                input [3: 0]              awregion,
+                                input [3: 0]              awuser  ,
                                 input                     awvalid ,
                                 output reg	              awready ,
 
@@ -79,6 +82,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   reg [7: 0] i = 0;
   reg [7: 0] j = 0;
   reg [7: 0] a = 0;
+  int mb_index;
 
   initial begin
     `uvm_info("axi4 slave driver bfm",$sformatf("AXI4 SLAVE DRIVER BFM"),UVM_LOW);
@@ -89,10 +93,17 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   // Creating Memories for each signal to store each transaction attributes
 
   reg [	3 : 0] 	            mem_awid	  [2**LENGTH];
-  reg [	ADDRESS_WIDTH-1: 0]	mem_waddr	  [2**LENGTH];
-  reg [	7 : 0]	            mem_wlen	  [2**LENGTH];
-  reg [	2 : 0]	            mem_wsize	  [2**LENGTH];
-  reg [ 1	: 0]	            mem_wburst  [2**LENGTH];
+  reg [	ADDRESS_WIDTH-1: 0]	mem_awaddr	  [2**LENGTH];
+  reg [	7 : 0]	            mem_awlen	  [2**LENGTH];
+  reg [	2 : 0]	            mem_awsize	  [2**LENGTH];
+  reg [ 1	: 0]	            mem_awburst  [2**LENGTH];
+  reg [1: 0]                mem_awlock     [2**LENGTH]   ;
+  reg [1: 0]                mem_awcache    [2**LENGTH]  ;
+  reg [2: 0]                mem_awprot     [2**LENGTH] ;
+  reg [3:0]                 mem_awqos       [2**LENGTH];
+  reg [3:0]                 mem_awregion    [2**LENGTH];
+  reg [3:0]                 mem_awuser      [2**LENGTH];
+
   bit                       mem_wlast   [2**LENGTH];
   
   reg [	3 : 0]	            mem_arid	  [2**LENGTH];
@@ -100,7 +111,14 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   reg [	7	: 0]	            mem_rlen	  [2**LENGTH];
   reg [	2	: 0]	            mem_rsize	  [2**LENGTH];
   reg [ 1	: 0]	            mem_rburst  [2**LENGTH];
-  
+  reg [1: 0]                mem_arlock     [2**LENGTH]   ;
+  reg [1: 0]                mem_arcache    [2**LENGTH]  ;
+  reg [2: 0]                mem_arprot     [2**LENGTH] ;
+  reg [3:0]                 mem_arqos       [2**LENGTH];
+  reg [3:0]                 mem_arregion    [2**LENGTH];
+  reg [3:0]                 mem_aruser      [2**LENGTH];
+
+  mailbox slave_write_ABDA_mb #(int) = new(2**LENGTH);
   //-------------------------------------------------------
   // Task: wait_for_system_reset
   // Waiting for the system reset to be active low
@@ -152,17 +170,29 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       
    // Sample the values
    mem_awid 	[i]	  = awid  	;	
-	 mem_waddr	[i] 	= awaddr	;
-	 mem_wlen 	[i]	  = awlen	  ;	
-	 mem_wsize	[i] 	= awsize	;	
-	 mem_wburst [i]   = awburst ;	
-   
+	 mem_awaddr	[i] 	= awaddr	;
+	 mem_awlen 	[i]	  = awlen	  ;	
+	 mem_awsize	[i] 	= awsize	;	
+	 mem_awburst [i]   = awburst ;
+   mem_awlock  [i]   = awlock  ;
+    mem_awcache [i]   = awcache ;
+    mem_awprot  [i]   = awprot  ;
+    mem_awqos   [i]   = awqos   ;
+    mem_awregion[i]   = awregion;
+    mem_awuser  [i]   = awuser  ;
+    mb_index = i;
+   slave_write_ABDA_mb.put(mb_index);
    data_write_packet.awid    = mem_awid   [i] ;
-   data_write_packet.awaddr  = mem_waddr  [i] ;
-   data_write_packet.awlen   = mem_wlen   [i] ;
-   data_write_packet.awsize  = mem_wsize  [i] ;
-   data_write_packet.awburst = mem_wburst [i] ;
-   
+   data_write_packet.awaddr  = mem_awaddr  [i] ;
+   data_write_packet.awlen   = mem_awlen   [i] ;
+   data_write_packet.awsize  = mem_awsize  [i] ;
+   data_write_packet.awburst = mem_awburst [i] ;
+   data_write_packet.awlock  = mem_awlock  [i] ;
+   data_write_packet.awcache = mem_awcache [i] ;
+    data_write_packet.awprot  = mem_awprot  [i] ;
+    data_write_packet.awqos   = mem_awqos   [i] ;
+    data_write_packet.awregion= mem_awregion[i] ;
+    data_write_packet.awuser  = mem_awuser  [i] ;
    i = i+1                   ;
     
    `uvm_info("mem_awid",$sformatf("mem_awid[%0d]=%0d",i,mem_awid[i]),UVM_HIGH)
@@ -196,7 +226,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     do begin
       @(posedge aclk);
     end while(wvalid===0);
-
+    slave_write_ABDA_mb.get(mb_index);
     `uvm_info("SLAVE_DRIVER_WRITE_DATA_PHASE", $sformatf("outside of wvalid"), UVM_MEDIUM); 
 
    // based on the wait_cycles we can choose to drive the wready
@@ -209,9 +239,9 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
     wready <= 1 ;
     
-    for(int s = 0;s<(mem_wlen[a]+1);s = s+1)begin
+    for(int s = 0;s<(mem_awlen[a]+1);s = s+1)begin
       @(posedge aclk);
-      `uvm_info("SLAVE_DEBUG",$sformatf("mem_length = %0d",mem_wlen[a]),UVM_NONE)
+      `uvm_info("SLAVE_DEBUG",$sformatf("mem_length = %0d",mem_awlen[a]),UVM_NONE)
        data_write_packet.wdata[s]=wdata;
        `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0h",s,data_write_packet.wdata[s]),UVM_HIGH);
        data_write_packet.wstrb[s]=wstrb;
@@ -222,7 +252,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
        
        // Used to sample the wlast at the end of transfer
        // and come out of the loop if wlast == 1
-        if(s == mem_wlen[a]) begin
+        if(s == mem_awlen[a]) begin
           mem_wlast[a] = wlast;
           `uvm_info("slave_wlast",$sformatf("slave1_wlast = %0b",wlast),UVM_HIGH);
           data_write_packet.wlast = wlast;
@@ -320,7 +350,13 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 	  mem_raddr	[j] 	= araddr	;
 	  mem_rlen 	[j]	  = arlen	  ;	
 	  mem_rsize	[j] 	= arsize	;	
-	  mem_rburst[j] 	= arburst ;	
+	  mem_rburst[j] 	= arburst ;
+    mem_arlock  [j]   = arlock  ;
+    mem_arcache [j]   = arcache ;
+    mem_arprot  [j]   = arprot  ;
+    mem_arqos   [j]   = arqos   ;
+    mem_arregion[j]   = arregion;
+    mem_aruser  [j]   = aruser  ;	
     arready         <= 1       ;
 
     data_read_packet.arid    = mem_arid[j]     ;
@@ -328,6 +364,12 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     data_read_packet.arlen   = mem_rlen[j]     ;
     data_read_packet.arsize  = mem_rsize[j]    ;
     data_read_packet.arburst = mem_rburst[j]   ;
+    data_read_packet.arlock  = mem_arlock[j]   ;
+    data_read_packet.arcache = mem_arcache[j]   ;
+    data_read_packet.arprot  = mem_arprot[j]   ;
+    data_read_packet.arqos   = mem_arqos[j]   ;
+    data_read_packet.arregion= mem_arregion[j];
+    data_read_packet.aruser  = mem_aruser[j]   ;  
 	  j = j+1                                    ;
     
     `uvm_info("mem_arid",$sformatf("mem_arid[%0d]=%0d",j,mem_arid[j]),UVM_HIGH)

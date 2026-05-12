@@ -124,6 +124,19 @@ package axi4_globals_pkg;
     READ_EXCLUSIVE_ACCESS = 2'b01
   } arlock_e;
 
+  typedef enum bit [1:0] {
+    NORMAL_ACCESS    = 2'b00,
+    EXCLUSIVE_ACCESS = 2'b01
+  } lock_e;
+
+  typedef enum bit [3:0]{
+    REGION_WR_NORMAL = 4'b0000,
+    REGION_WR_SECURE = 4'b0001,
+    REGION_RD_NORMAL = 4'b0010,
+    REGION_RD_SECURE = 4'b0011,
+    REGION_EXCLUSIVE = 4'b0100,
+  } region_e;
+
   //Enum: awcache_e
   //Used to declare enum type for write cache access
   typedef enum bit [1:0] {
@@ -174,6 +187,17 @@ package axi4_globals_pkg;
     READ_PRIVILEGED_NONSECURE_DATA        = 3'b110,
     READ_PRIVILEGED_NONSECURE_INSTRUCTION = 3'b111
   } arprot_e;
+
+  typedef enum bit [2:0] {
+    NORMAL_SECURE_DATA               = 3'b000,
+    NORMAL_SECURE_INSTRUCTION        = 3'b001,
+    NORMAL_NONSECURE_DATA            = 3'b010,
+    NORMAL_NONSECURE_INSTRUCTION     = 3'b011,
+    PRIVILEGED_SECURE_DATA           = 3'b100,
+    PRIVILEGED_SECURE_INSTRUCTION    = 3'b101,
+    PRIVILEGED_NONSECURE_DATA        = 3'b110,
+    PRIVILEGED_NONSECURE_INSTRUCTION = 3'b111
+  } prot_e;
 
   //Enum: awid_e
   //Used to declare the enum type of write address id

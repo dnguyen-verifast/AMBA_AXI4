@@ -58,6 +58,9 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   // Variables used for out of order support
   bit[3:0] response_id_queue[$];
   bit[3:0] response_id_cont_queue[$];
+
+  axi4_slave_tx associate_queue_ooo_qos [bit[3:0]] [$];
+  
   bit      drive_id_cont;
   bit      drive_rd_id_cont;
   axi4_read_transfer_char_s rd_response_id_queue[$];
@@ -191,7 +194,14 @@ task axi4_slave_driver_proxy::axi4_write_task();
      //write address_task
      axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
 
+     axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_addr_tx);
+
      if(axi4_slave_agent_cfg_h.slave_response_mode == WRITE_READ_RESP_OUT_OF_ORDER || axi4_slave_agent_cfg_h.slave_response_mode == ONLY_WRITE_RESP_OUT_OF_ORDER) begin
+        // associate_queue_ooo_qos[struct_write_packet.awid].push_back(local_slave_addr_tx);
+        // if(associate_queue_ooo_qos[struct_write_packet.awid].exist(struct_write_packet.awid)) begin
+        //   `uvm_info("OUT_OF_ORDER",$sformatf("Detected a same id = %d",struct_write_packet.awid),UVM_LOW);
+        // end
+        
        if(response_id_queue.size() == 0) begin
          response_id_queue.push_back(struct_write_packet.awid);
        end
@@ -211,7 +221,6 @@ task axi4_slave_driver_proxy::axi4_write_task();
      end
 		`uvm_info("DEBUG_QUEUE_ID",$sformatf("response id queue: %p",response_id_queue),UVM_LOW);
      //Converting struct into transaction data type
-     axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_addr_tx);
      
      `uvm_info("DEBUG_SLAVE_WRITE_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_addr_tx.sprint()), UVM_NONE);
      
@@ -278,8 +287,9 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_transfer_cfg_s        struct_cfg;
       bit[3:0]                   bid_local;
       int                        end_wrap_addr;
-      bit                        slave_err;
-      
+      int                        slave_err;
+      bit                        violation_addr;   
+      int                        min_addr;
       //returns status of response thread
       response_tx=process::self();
 
@@ -317,10 +327,23 @@ task axi4_slave_driver_proxy::axi4_write_task();
       end
       if(local_slave_addr_tx.awburst == WRITE_INCR) begin
         end_wrap_addr =  local_slave_addr_tx.awaddr + ((local_slave_addr_tx.awlen+1)*(2**local_slave_addr_tx.awsize));
+        if(end_wrap_addr[31:12] != local_slave_addr_tx.awaddr[31:12]) begin
+            violation_addr = 1;
+            `uvm_info("SLAVE_AGENT",$sformatf("Address wrap around detected. Marking as error"),UVM_LOW);
+        end else begin
+            violation_addr = 0;
+        end
       end
       if(local_slave_addr_tx.awburst == WRITE_WRAP) begin
          end_wrap_addr = local_slave_addr_tx.awaddr - int'(local_slave_addr_tx.awaddr%((local_slave_addr_tx.awlen+1)*(2**local_slave_addr_tx.awsize)));
+         min_addr = local_slave_addr_tx.awaddr - int'(local_slave_addr_tx.awaddr%((local_slave_addr_tx.awlen+1)*(2**local_slave_addr_tx.awsize)));
          end_wrap_addr = end_wrap_addr + ((local_slave_addr_tx.awlen+1)*(2**local_slave_addr_tx.awsize));
+        if(min_addr[31:12] != local_slave_addr_tx.awaddr[31:12]) begin
+              violation_addr = 1;
+              `uvm_info("SLAVE_AGENT",$sformatf("Address wrap around detected. Marking as error"),UVM_LOW);
+        end else begin
+              violation_addr = 0;
+        end
       end
 			`uvm_info("SLAVE_AGENT",$sformatf("read_data_mode = %0b",axi4_slave_agent_cfg_h.read_data_mode),UVM_LOW);
       `uvm_info("get_type_name",$sformatf("end_addr=%0h",end_wrap_addr),UVM_HIGH);
@@ -342,30 +365,40 @@ task axi4_slave_driver_proxy::axi4_write_task();
             `uvm_info("slave_driver_proxy",$sformatf("bid_local = %0d",bid_local),UVM_LOW)
           end
           if(axi4_slave_agent_cfg_h.read_data_mode == SLAVE_MEM_MODE || axi4_slave_agent_cfg_h.read_data_mode == SLAVE_ERR_RESP_MODE) begin
-             if(!((local_slave_addr_tx.awaddr inside {[axi4_slave_agent_cfg_h.min_address :
-               axi4_slave_agent_cfg_h.max_address]}) && (end_wrap_addr inside
-               {[axi4_slave_agent_cfg_h.min_address : axi4_slave_agent_cfg_h.max_address]}))) begin
-               struct_write_packet.bresp = WRITE_SLVERR;
-               slave_err = 1;
-             end
-          end
+            //  if(!((local_slave_addr_tx.awaddr inside {[axi4_slave_agent_cfg_h.min_address :
+            //    axi4_slave_agent_cfg_h.max_address]}) && (end_wrap_addr inside
+            //    {[axi4_slave_agent_cfg_h.min_address : axi4_slave_agent_cfg_h.max_address]}))) begin
+            slave_err = axi4_slave_memory_h.check_access_permission(local_slave_addr_tx.awaddr, 
+                                                        local_slave_addr_tx.awregion, 
+                                                        local_slave_addr_tx.awprot, 
+                                                        local_slave_addr_tx.awlock, 1'b1)
+            local_slave_addr_tx.bresp = (slave_err == 2)? WRITE_SLVERR 
+                                          : ((violation_addr == 1)? ((local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_OKAY : WRITE_EXOKAY) 
+                                            : (local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_EXOKAY : WRITE_OKAY);
           // write response_task
           axi4_slave_drv_bfm_h.axi4_write_response_phase(struct_write_packet,struct_cfg,bid_local);
           `uvm_info("DEBUG_SLAVE_WDATA_PROXY", $sformatf("AFTER :: Reciving struct pkt from bfm \n %p",struct_write_packet), UVM_HIGH);
-      //  end
+        end
       end
       else begin
-       if(axi4_slave_agent_cfg_h.read_data_mode == SLAVE_MEM_MODE || axi4_slave_agent_cfg_h.read_data_mode == SLAVE_ERR_RESP_MODE) begin
-          if(!((local_slave_addr_tx.awaddr inside {[axi4_slave_agent_cfg_h.min_address :
-            axi4_slave_agent_cfg_h.max_address]}) && (end_wrap_addr inside
-            {[axi4_slave_agent_cfg_h.min_address : axi4_slave_agent_cfg_h.max_address]}))) begin
-            struct_write_packet.bresp = WRITE_SLVERR;
-            slave_err = 1;
-          end
-        end
+        if(axi4_slave_agent_cfg_h.read_data_mode == SLAVE_MEM_MODE || axi4_slave_agent_cfg_h.read_data_mode == SLAVE_ERR_RESP_MODE) begin
+          // if(!((local_slave_addr_tx.awaddr inside {[axi4_slave_agent_cfg_h.min_address :
+          //   axi4_slave_agent_cfg_h.max_address]}) && (end_wrap_addr inside
+          //   {[axi4_slave_agent_cfg_h.min_address : axi4_slave_agent_cfg_h.max_address]}))) begin
+          //   struct_write_packet.bresp = WRITE_SLVERR;
+          //   slave_err = 1;
+          // end
+          slave_err = axi4_slave_memory_h.check_access_permission(local_slave_addr_tx.awaddr, 
+                                                        local_slave_addr_tx.awregion, 
+                                                        local_slave_addr_tx.awprot, 
+                                                        local_slave_addr_tx.awlock, 1'b1)
+          local_slave_addr_tx.bresp = (slave_err == 2)? WRITE_SLVERR 
+                                        : ((violation_addr == 1)? ((local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_OKAY : WRITE_EXOKAY) 
+                                          : (local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_EXOKAY : WRITE_OKAY); 
         // write response_task
-        axi4_slave_drv_bfm_h.axi4_write_response_phase(struct_write_packet,struct_cfg,bid_local);
-        `uvm_info("DEBUG_SLAVE_WDATA_PROXY", $sformatf("AFTER :: Reciving struct pkt from bfm \n %p",struct_write_packet), UVM_HIGH);
+          axi4_slave_drv_bfm_h.axi4_write_response_phase(struct_write_packet,struct_cfg,bid_local);
+          `uvm_info("DEBUG_SLAVE_WDATA_PROXY", $sformatf("AFTER :: Reciving struct pkt from bfm \n %p",struct_write_packet), UVM_HIGH);
+        end
       end
 
       //Converting struct into transaction data type
