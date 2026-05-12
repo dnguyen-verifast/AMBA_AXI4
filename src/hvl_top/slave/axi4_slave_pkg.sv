@@ -19,6 +19,8 @@ package axi4_slave_pkg;
   //-------------------------------------------------------
   // Include all other files
   //-------------------------------------------------------
+  `include "axi4_slave_mem_region_cfg.sv"
+  `include "axi4_slave_mem_map_cfg.sv"
   `include "axi4_slave_memory.sv"
   `include "axi4_slave_tx.sv"
   `include "axi4_slave_agent_config.sv"
