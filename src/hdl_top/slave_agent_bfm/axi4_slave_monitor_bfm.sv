@@ -17,6 +17,8 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
                                 input [1: 0]awlock  ,
                                 input [1: 0]awcache ,
                                 input [2: 0]awprot  ,
+																input [3:0] awqos	,
+																input [3:0] awregion	,
                                 input awvalid ,
                                 input awready ,
 
