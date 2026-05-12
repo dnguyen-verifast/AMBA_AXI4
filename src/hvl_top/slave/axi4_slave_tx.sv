@@ -36,6 +36,9 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Variable : awlock
   //Used to send the  write address lock
   awlock_e awlock;
+	
+	
+	awregion_e awregion;
 
   //Variable : awcache
   //Used to send the write address cache
@@ -113,7 +116,8 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Variable : awlock
   //Used to send the  write address lock
   rand arlock_e arlock;
-
+	
+	rand arregion_e arregion;
   //Variable : awcache
   //Used to send the write address cache
   rand arcache_e arcache;

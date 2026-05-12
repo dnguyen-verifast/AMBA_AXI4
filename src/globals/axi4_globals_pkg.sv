@@ -128,13 +128,27 @@ package axi4_globals_pkg;
     NORMAL_ACCESS    = 2'b00,
     EXCLUSIVE_ACCESS = 2'b01
   } lock_e;
+	typedef enum bit [3:0]{
+    REGION_WR_NORMAL = 4'b0000,
+    REGION_WR_SECURE = 4'b0001,
+    REGION_RD_NORMAL = 4'b0010,
+    REGION_RD_SECURE = 4'b0011,
+    REGION_EXCLUSIVE = 4'b0100
+  } awregion_e;
+	typedef enum bit [3:0]{
+    REGION_WR_NORMAL = 4'b0000,
+    REGION_WR_SECURE = 4'b0001,
+    REGION_RD_NORMAL = 4'b0010,
+    REGION_RD_SECURE = 4'b0011,
+    REGION_EXCLUSIVE = 4'b0100
+  } arregion_e;
 
   typedef enum bit [3:0]{
     REGION_WR_NORMAL = 4'b0000,
     REGION_WR_SECURE = 4'b0001,
     REGION_RD_NORMAL = 4'b0010,
     REGION_RD_SECURE = 4'b0011,
-    REGION_EXCLUSIVE = 4'b0100,
+    REGION_EXCLUSIVE = 4'b0100
   } region_e;
 
   //Enum: awcache_e

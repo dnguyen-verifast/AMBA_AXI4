@@ -1,3 +1,5 @@
+`ifndef AXI4_SLAVE_MEM_REGION_CFG_INCLUDE_
+`define AXI4_SLAVE_MEM_REGION_CFG_INCLUDE_ 
 class axi4_slave_mem_region_cfg extends uvm_object;
     `uvm_object_utils(axi4_slave_mem_region_cfg)
     prot_e prot_slave;
@@ -10,3 +12,4 @@ class axi4_slave_mem_region_cfg extends uvm_object;
         data_mode = WRITE_READ_DATA;
     endfunction
 endclass
+`endif

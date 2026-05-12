@@ -371,7 +371,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
             slave_err = axi4_slave_memory_h.check_access_permission(local_slave_addr_tx.awaddr, 
                                                         local_slave_addr_tx.awregion, 
                                                         local_slave_addr_tx.awprot, 
-                                                        local_slave_addr_tx.awlock, 1'b1)
+                                                        local_slave_addr_tx.awlock, 1'b1);
             local_slave_addr_tx.bresp = (slave_err == 2)? WRITE_SLVERR 
                                           : ((violation_addr == 1)? ((local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_OKAY : WRITE_EXOKAY) 
                                             : (local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_EXOKAY : WRITE_OKAY);
@@ -391,7 +391,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
           slave_err = axi4_slave_memory_h.check_access_permission(local_slave_addr_tx.awaddr, 
                                                         local_slave_addr_tx.awregion, 
                                                         local_slave_addr_tx.awprot, 
-                                                        local_slave_addr_tx.awlock, 1'b1)
+                                                        local_slave_addr_tx.awlock, 1'b1);
           local_slave_addr_tx.bresp = (slave_err == 2)? WRITE_SLVERR 
                                         : ((violation_addr == 1)? ((local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_OKAY : WRITE_EXOKAY) 
                                           : (local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_EXOKAY : WRITE_OKAY); 

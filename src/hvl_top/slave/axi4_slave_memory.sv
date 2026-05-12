@@ -52,7 +52,7 @@ function axi4_slave_memory::new(string name = "axi4_slave_memory");
   super.new(name); 
 endfunction : new
 
-virtual function void axi4_slave_memory::init_memory_cfg();
+function void axi4_slave_memory::init_memory_cfg();
   axi4_slave_mem_region_cfg region_cfg;
 
   if(uvm_config_db#(axi4_slave_mem_map_cfg)::get(null,"*", "mem_map_cfg", mem_map_cfg)) begin
@@ -63,7 +63,7 @@ virtual function void axi4_slave_memory::init_memory_cfg();
   end 
 endfunction : init_memory_cfg
 
-virtual function void axi4_slave_memory::init_default_mem_map_cfg();
+function void axi4_slave_memory::init_default_mem_map_cfg();
   
   axi4_slave_mem_region_cfg region_cfg;
 
@@ -76,8 +76,8 @@ virtual function void axi4_slave_memory::init_default_mem_map_cfg();
   mem_map_cfg.test_set_mem_region_cfg(REGION_WR_NORMAL, region_cfg);
   
   region_cfg = axi4_slave_mem_region_cfg::type_id::create("REGION_WR_SECURE");
-  region_cfg.prot_slave = SECURE_DATA;
-  region_cfg.lock_slave = SECURE_ACCESS;
+  region_cfg.prot_slave = NORMAL_SECURE_DATA;
+  region_cfg.lock_slave = NORMAL_ACCESS;
   region_cfg.data_mode = WRITE_READ_DATA;
   mem_map_cfg.test_set_mem_region_cfg(REGION_WR_SECURE, region_cfg);
 
@@ -88,33 +88,33 @@ virtual function void axi4_slave_memory::init_default_mem_map_cfg();
   mem_map_cfg.test_set_mem_region_cfg(REGION_RD_NORMAL, region_cfg);
 
   region_cfg = axi4_slave_mem_region_cfg::type_id::create("REGION_RD_SECURE");
-  region_cfg.prot_slave = SECURE_DATA;
-  region_cfg.lock_slave = SECURE_ACCESS;
+  region_cfg.prot_slave =PRIVILEGED_SECURE_DATA;
+  region_cfg.lock_slave = NORMAL_ACCESS;
   region_cfg.data_mode = WRITE_READ_DATA;
   mem_map_cfg.test_set_mem_region_cfg(REGION_RD_SECURE, region_cfg);
 
   region_cfg = axi4_slave_mem_region_cfg::type_id::create("REGION_EXCLUSIVE");
-  region_cfg.prot_slave = EXCLUSIVE_DATA;
+  region_cfg.prot_slave = PRIVILEGED_SECURE_DATA ;
   region_cfg.lock_slave = EXCLUSIVE_ACCESS;
-  region_cfg.data_mode = READ_DATA;
+  region_cfg.data_mode = WRITE_READ_DATA;
   mem_map_cfg.test_set_mem_region_cfg(REGION_EXCLUSIVE, region_cfg);
 
 
 endfunction : init_default_mem_map_cfg
 
 
-virtual function bit [ADDRESS_WIDTH-1:0] axi4_slave_memory::get_region_base_addr(bit [ADDRESS_WIDTH -1:0] base_addr, region_e region_id);
+ function bit [ADDRESS_WIDTH-1:0] axi4_slave_memory::get_region_base_addr(bit [ADDRESS_WIDTH -1:0] base_addr, region_e region_id);
   return base_addr + (region_id * REGION_OFFSET);
 endfunction : get_region_base_addr
 
 
 
-virtual function void axi4_slave_memory::record_read_exclusive (bit [ADDRESS_WIDTH-1:0] address, bit [3:0] id);
+ function void axi4_slave_memory::record_read_exclusive (bit [ADDRESS_WIDTH-1:0] address, bit [3:0] id);
   exclusive_monitor[address] = id;
   `uvm_info("EXCL_MON", $sformatf("Manager ID %0d granted exclusive tracking at Addr 32'h%0h", id, address), UVM_LOW)
 endfunction : record_read_exclusive
 
-virtual function bit axi4_slave_memory::check_exclusive_write (bit [ADDRESS_WIDTH-1:0] address, bit [3:0] id);
+ function bit axi4_slave_memory::check_exclusive_write (bit [ADDRESS_WIDTH-1:0] address, bit [3:0] id);
   if(exclusive_monitor.exists(address) && exclusive_monitor[address] == id) begin
     exclusive_monitor.delete(id);
     return 1; 
@@ -125,7 +125,7 @@ virtual function bit axi4_slave_memory::check_exclusive_write (bit [ADDRESS_WIDT
   end
 endfunction : check_exclusive_write
 
-virtual function void axi4_slave_memory::clear_monitor_on_write (bit [ADDRESS_WIDTH-1:0] address);
+ function void axi4_slave_memory::clear_monitor_on_write (bit [ADDRESS_WIDTH-1:0] address);
   bit [3:0] id_queue [$];
   foreach(exclusive_monitor[id]) begin
       if(exclusive_monitor[id] == address) begin
@@ -188,7 +188,7 @@ function void axi4_slave_memory::fifo_read(output bit [DATA_WIDTH-1:0]data);
 endfunction : fifo_read
 
 
-virtual function int check_access_permission( bit [ADDRESS_WIDTH-1:0] base_addr,
+ function int axi4_slave_memory::check_access_permission( bit [ADDRESS_WIDTH-1:0] base_addr,
                                                        region_e region_id, 
                                                        prot_e prot,
                                                        lock_e lock,
@@ -207,7 +207,7 @@ virtual function int check_access_permission( bit [ADDRESS_WIDTH-1:0] base_addr,
     if (region_cfg.prot_slave[0] == 1'b1 && prot[0] == 1'b0) return 2;
   end else begin
     if (region_cfg.data_mode == ONLY_WRITE_DATA) return 2;
-    if (lock == READ_EXCLUSIVE_ACCESS && region_cfg.arlock_slave == READ_NORMAL_ACCESS) return 2;
+    if (lock == READ_EXCLUSIVE_ACCESS && region_cfg.lock_slave == READ_NORMAL_ACCESS) return 2;
     if (region_cfg.prot_slave[1] == 1'b0 && prot[1] == 1'b1) return 2;
     if (region_cfg.prot_slave[0] == 1'b1 && prot[0] == 1'b0) return 2;
   end
