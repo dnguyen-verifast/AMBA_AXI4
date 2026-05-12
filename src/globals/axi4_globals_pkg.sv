@@ -128,7 +128,7 @@ package axi4_globals_pkg;
     NORMAL_ACCESS    = 2'b00,
     EXCLUSIVE_ACCESS = 2'b01
   } lock_e;
-	typedef enum bit [3:0]{
+	typedef enum bit [3:0] {
     WRITE_REGION_WR_NORMAL = 4'b0000,
     WRITE_REGION_WR_SECURE = 4'b0001,
     WRITE_REGION_RD_NORMAL = 4'b0010,

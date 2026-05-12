@@ -60,6 +60,9 @@ function void axi4_master_seq_item_converter::from_write_class( input axi4_maste
   $cast(output_conv_h.awlock,input_conv_h.awlock);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting awlock =  %b",output_conv_h.awlock),UVM_HIGH);
 
+  $cast(output_conv_h.awregion,input_conv_h.awregion);
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting awregion =  %b",output_conv_h.awregion),UVM_HIGH);
+
   $cast(output_conv_h.awcache,input_conv_h.awcache);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomizing awcache =  %b",output_conv_h.awcache),UVM_HIGH);
 
@@ -211,6 +214,9 @@ function void axi4_master_seq_item_converter::to_write_class( input axi4_write_t
   $cast(output_conv_h.awlock,input_conv_h.awlock);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting awlock =  %b",output_conv_h.awlock),UVM_HIGH);
 
+    $cast(output_conv_h.awregion,input_conv_h.awregion);
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting awregion =  %b",output_conv_h.awregion),UVM_HIGH);
+
   $cast(output_conv_h.awcache,input_conv_h.awcache);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomizing awcache =  %b",output_conv_h.awcache),UVM_HIGH);
 
@@ -341,6 +347,7 @@ function void axi4_master_seq_item_converter::to_write_addr_data_class(input axi
   $cast(output_conv_h.awsize,waddr_packet.awsize);
   $cast(output_conv_h.awburst,waddr_packet.awburst); 
   $cast(output_conv_h.awlock,waddr_packet.awlock);
+  $cast(output_conv_h.awregion,waddr_packet.awregion);
   $cast(output_conv_h.awcache,waddr_packet.awcache);
   $cast(output_conv_h.awprot,waddr_packet.awprot);
   output_conv_h.awaddr = waddr_packet.awaddr;
@@ -388,6 +395,7 @@ function void axi4_master_seq_item_converter::to_write_addr_data_resp_class(inpu
   $cast(output_conv_h.awsize,waddr_data_packet.awsize);
   $cast(output_conv_h.awburst,waddr_data_packet.awburst); 
   $cast(output_conv_h.awlock,waddr_data_packet.awlock);
+  $cast(output_conv_h.awregion,waddr_data_packet.awregion);
   $cast(output_conv_h.awcache,waddr_data_packet.awcache);
   $cast(output_conv_h.awprot,waddr_data_packet.awprot);
   output_conv_h.awaddr = waddr_data_packet.awaddr;
@@ -464,6 +472,7 @@ function void axi4_master_seq_item_converter::do_print(uvm_printer printer);
   printer.print_field("awsize",axi4_w_st.awsize,$bits(axi4_w_st.awsize),UVM_BIN);
   printer.print_field("awburst",axi4_w_st.awburst,$bits(axi4_w_st.awburst),UVM_BIN);
   printer.print_field("awlock",axi4_w_st.awlock,$bits(axi4_w_st.awlock),UVM_BIN);
+  printer.print_field("awregion",axi4_w_st.awregion,$bits(axi4_w_st.awregion),UVM_BIN);
   printer.print_field("awcache",axi4_w_st.awcache,$bits(axi4_w_st.awcache),UVM_BIN);
   printer.print_field("awprot",axi4_w_st.awprot,$bits(axi4_w_st.awprot),UVM_DEC);
   printer.print_field("bid",axi4_w_st.bid,$bits(axi4_w_st.bid),UVM_DEC);
