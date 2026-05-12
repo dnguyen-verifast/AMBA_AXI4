@@ -21,6 +21,8 @@ interface slave_assertions (input                     aclk,
                              input               [1:0] awlock,
                              input               [1:0] awcache, // [3:0] -> [1:0]
                              input               [2:0] awprot,
+                             input               [3:0] awqos,
+                             input               [3:0] awregion,
                              input                     awvalid,
                              input                     awready,
                              //Write Data Channel Signals
