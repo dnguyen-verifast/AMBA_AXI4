@@ -128,7 +128,9 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
   // Task: axi4_slave_write_data_sampling
   // Used for sample the write data channel signals
   //-------------------------------------------------------
-  task axi4_slave_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
+  task axi4_slave_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg, output int beat_count);
+    static reg[7:0] i = 0;
+    beat_count = 0;
   
   forever begin
    // wait for valid and ready to be high
@@ -149,7 +151,7 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
    i = 0;
    break;
    end
-  
+  beat_count++;
    i++;
   end
  endtask
