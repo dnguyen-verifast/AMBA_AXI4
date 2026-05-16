@@ -303,9 +303,9 @@ task axi4_slave_monitor_proxy::axi4_slave_read_address();
          min_addr = req_rd.araddr - int'(req_rd.araddr%((req_rd.arlen+1)*(2**req_rd.arsize)));
          end_wrap_addr = end_wrap_addr + ((req_rd.arlen+1)*(2**req_rd.arsize));
       end
-    if(min_addr[31:12] != req_rd.araddr[31:12] || end_wrap_addr[31:12] != req_rd.araddr[31:12])
+    if(min_addr[31:12] != req_rd.araddr[31:12] || end_wrap_addr[31:12] != req_rd.araddr[31:12]) begin
       `uvm_error("SLAVE_MONITOR",$sformatf("Address read exceed 4kb boundary. Marking as error"));
-       else `uvm_info("SLAVE_MONITOR",$sformatf("Address read is within 4kb boundary."),UVM_LOW);
+    end else `uvm_info("SLAVE_MONITOR",$sformatf("Address read is within 4kb boundary."),UVM_LOW); end
 
     // Checking for burst length 
     if(req_rd.arburst == READ_WRAP && (req_rd.arlen > 15 || (req_rd.arlen + 1)%2 != 0)) begin
@@ -532,7 +532,7 @@ function void axi4_slave_monitor_proxy::strobe_generation(axi4_slave_tx req);
     end
     
     else if(req.awsize == 1) begin
-      if(quotient_check_1 % 2**awsize == 0) begin 
+      if(quotient_check_1 % 2**req.awsize == 0) begin 
         if(i==0) begin
           req.wstrb[0] = wstrb_local;
           `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
@@ -563,7 +563,7 @@ function void axi4_slave_monitor_proxy::strobe_generation(axi4_slave_tx req);
       end
     end
     
-    else if(awsize == 2) begin
+    else if(req.awsize == 2) begin
       req.wstrb[i] = wstrb_local;
     end
   end
