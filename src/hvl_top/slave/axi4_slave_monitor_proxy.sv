@@ -138,23 +138,25 @@ task axi4_slave_monitor_proxy::axi4_slave_write_address();
     // checking for address exceeding 4kb boundary
     if(req_wr.awburst == WRITE_FIXED) begin
         end_wrap_addr =  req_wr.awaddr;
+    end
+    if(req_wr.awburst == WRITE_INCR) begin
+      end_wrap_addr =  req_wr.awaddr + ((req_wr.awlen+1)*(2**req_wr.awsize));
+    end
+    if(req_wr.awburst == WRITE_WRAP) begin
+      if(req_wr.awaddr%(2**req_wr.awsize) != 0) begin
+        `uvm_error("SLAVE_MONITOR",$sformatf("Address is not aligned to Wrap burst. Marking as error"));
+      end else begin
+        `uvm_info("SLAVE_MONITOR",$sformatf("Address is aligned to Wrap burst."),UVM_LOW);
       end
-      if(req_wr.awburst == WRITE_INCR) begin
-        end_wrap_addr =  req_wr.awaddr + ((req_wr.awlen+1)*(2**req_wr.awsize));
-      end
-      if(req_wr.awburst == WRITE_WRAP) begin
-        if(req_wr.awaddr%(2**req_wr.awsize) != 0) begin
-          `uvm_error("SLAVE_MONITOR",$sformatf("Address is not aligned to Wrap burst. Marking as error"));
-        end else begin
-          `uvm_info("SLAVE_MONITOR",$sformatf("Address is aligned to Wrap burst."),UVM_LOW);
-        end
-         end_wrap_addr = req_wr.awaddr - int'(req_wr.awaddr%((req_wr.awlen+1)*(2**req_wr.awsize)));
-         min_addr = req_wr.awaddr - int'(req_wr.awaddr%((req_wr.awlen+1)*(2**req_wr.awsize)));
-         end_wrap_addr = end_wrap_addr + ((req_wr.awlen+1)*(2**req_wr.awsize));
-      end
-    if(min_addr[31:12] != req_wr.awaddr[31:12] || end_wrap_addr[31:12] != req_wr.awaddr[31:12])
-      `uvm_error("SLAVE_MONITOR",$sformatf("Address write exceed 4kb boundary. Marking as error"));
-       else `uvm_info("SLAVE_MONITOR",$sformatf("Address write is within 4kb boundary."),UVM_LOW);
+       end_wrap_addr = req_wr.awaddr - int'(req_wr.awaddr%((req_wr.awlen+1)*(2**req_wr.awsize)));
+       min_addr = req_wr.awaddr - int'(req_wr.awaddr%((req_wr.awlen+1)*(2**req_wr.awsize)));
+       end_wrap_addr = end_wrap_addr + ((req_wr.awlen+1)*(2**req_wr.awsize));
+    end
+    if(min_addr[31:12] != req_wr.awaddr[31:12] || end_wrap_addr[31:12] != req_wr.awaddr[31:12]) begin
+      `uvm_error("SLAVE_MONITOR",$sformatf("Address write exceed 4kb boundary. Marking as error")); end
+    else begin 
+      `uvm_info("SLAVE_MONITOR",$sformatf("Address write is within 4kb boundary."),UVM_LOW);
+    end
 
     // Checking for burst length 
     if(req_wr.awburst == WRITE_WRAP && (req_wr.awlen > 15 || (req_wr.awlen + 1)%2 != 0)) begin

@@ -511,9 +511,7 @@ task axi4_slave_driver_proxy::axi4_read_task();
       //returns status of data thread
       rd_data = process::self();
 
-
       //Waiting for the read address thread to complete
-      while()
       rd_addr.await();
 
       //Getting the data from read data fifo
