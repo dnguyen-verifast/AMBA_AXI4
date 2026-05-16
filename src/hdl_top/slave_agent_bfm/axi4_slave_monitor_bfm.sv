@@ -207,9 +207,10 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
   // Task: axi4_read_data_sampling
   // Used for sample the read data channel signals
   //-------------------------------------------------------
-  task axi4_read_data_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
+  task axi4_read_data_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg, output int beat_read_count);
     static reg[7:0] i = 0;
-    
+    beat_read_count = 0;
+
     forever begin
       
       // Wait for valid and ready to be high
@@ -229,13 +230,14 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RDATA[%0d]=%0h",i,rdata),UVM_HIGH)
       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON REQ.RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
       i++;
-      
+      beat_read_count = i;
       if(req.rlast == 1) begin
        `uvm_info("FROM SLAVE MON BFM read data",$sformatf("Inside RLAST Read Data Packet  =%p",req),UVM_HIGH)
        i = 0;
        break;
       end 
       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("Read data packet: %p",req),UVM_HIGH)
+      
    end
   endtask
 

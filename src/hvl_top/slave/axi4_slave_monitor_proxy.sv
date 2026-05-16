@@ -221,7 +221,7 @@ task axi4_slave_monitor_proxy::axi4_slave_write_data();
     // checking for trobe mismatch with address and size
     for (int i = 0; i < local_write_addr_packet.awlen+1; i++) begin
       if(local_write_addr_packet.wstrb[i] != req_wr.wstrb[i]) begin
-        `uvm_error("SLAVE_MONITOR",$sformatf("Wstrb mismatch with address and size. Marking as error"));
+        `uvm_error("SLAVE_MONITOR",$sformatf("Wstrb[%0d] mismatch with address and size. Marking as error",i));
       end else begin
         `uvm_info("SLAVE_MONITOR",$sformatf("Wstrb is consistent with address and size."),UVM_LOW);
       end
@@ -348,12 +348,19 @@ task axi4_slave_monitor_proxy::axi4_slave_read_data();
     axi4_read_transfer_char_s struct_read_packet;
     axi4_transfer_cfg_s       struct_cfg;
     axi4_slave_tx             req_rd_clone_packet; 
-    axi4_slave_tx             local_read_addr_packet; 
+    axi4_slave_tx             local_read_addr_packet;
+    int                      beat_read_count; 
 
     axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h, struct_cfg);
-    axi4_slave_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
+    axi4_slave_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg,beat_read_count);
     axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);
-    
+
+    if(beat_read_count != req_rd.arlen+1) begin
+      `uvm_error("SLAVE_MONITOR",$sformatf("Beat count is not equal to burst length. Marking as error"));
+    end else begin
+      `uvm_info("SLAVE_MONITOR",$sformatf("Beat count is equal to burst length."),UVM_LOW);
+    end
+
     axi4_slave_read_fifo_h.get(local_read_addr_packet);
     `uvm_info(get_type_name(),$sformatf("READ_ADDR_Packet received from fifo is \n %s",local_read_addr_packet.sprint()),UVM_HIGH)   
     

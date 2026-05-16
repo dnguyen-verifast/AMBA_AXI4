@@ -11,6 +11,7 @@
 +incdir+../../src/hdl_top/slave_agent_bfm
 +incdir+../../src/hdl_top/axi4_interface
 ../../src/globals/axi4_globals_pkg.sv
+../../src/hvl_top/base_tx/axi4_base_tx.sv
 ../../src/hvl_top/master/axi4_master_pkg.sv
 ../../src/hvl_top/slave/axi4_slave_pkg.sv
 ../../src/hvl_top/test/sequences/master_sequences/axi4_master_seq_pkg.sv

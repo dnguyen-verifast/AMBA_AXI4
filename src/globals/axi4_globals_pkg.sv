@@ -331,6 +331,16 @@ package axi4_globals_pkg;
     NON_BLOCKING_READ   = 2'b11 
   }transfer_type_e;
 
+  typedef enum bit [2:0] {
+    CHECK_WRITE_ADDRESS = 3'b000,
+    CHECK_WRITE_DATA    = 3'b001,
+    CHECK_WRITE_RESP    = 3'b010,
+    CHECK_READ_ADDRESS  = 3'b011,
+    CHECK_READ_DATA     = 3'b100,
+    CHECK_ALL           = 3'b101,
+    NO_CHECK            = 3'b110
+  } compare_mode_e;
+
   //Enum : read_data_type_mode_e
   //Used to the determine the type of the read data
   typedef enum bit[1:0] {
