@@ -212,7 +212,7 @@ class axi4_base_tx extends uvm_sequence_item;
   extern function void do_print(uvm_printer printer);
 endclass : axi4_base_tx
 
-function axi_base_tx::new(string name ="axi4_base_tx");
+function axi4_base_tx::new(string name ="axi4_base_tx");
     super.new(name);
 endfunction: new
 
