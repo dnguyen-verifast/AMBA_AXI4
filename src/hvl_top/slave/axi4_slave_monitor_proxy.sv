@@ -305,7 +305,7 @@ task axi4_slave_monitor_proxy::axi4_slave_read_address();
       end
     if(min_addr[31:12] != req_rd.araddr[31:12] || end_wrap_addr[31:12] != req_rd.araddr[31:12]) begin
       `uvm_error("SLAVE_MONITOR",$sformatf("Address read exceed 4kb boundary. Marking as error"));
-    end else `uvm_info("SLAVE_MONITOR",$sformatf("Address read is within 4kb boundary."),UVM_LOW); end
+    end else begin `uvm_info("SLAVE_MONITOR",$sformatf("Address read is within 4kb boundary."),UVM_LOW); end
 
     // Checking for burst length 
     if(req_rd.arburst == READ_WRAP && (req_rd.arlen > 15 || (req_rd.arlen + 1)%2 != 0)) begin
