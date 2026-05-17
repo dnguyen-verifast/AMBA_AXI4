@@ -373,7 +373,7 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
   // Write_Response_Channel comparision
   //-------------------------------------------------------
 
-  if((axi4_master_tx_awaddr_count != axi4_master_tx_wdata_count) && (axi4_master_tx_wdata_count != axi4_master_tx_wresp_count)) begin
+  if((axi4_master_tx_awaddr_count != axi4_master_tx_wdata_count) && (axi4_master_tx_wdata_count != axi4_master_tx_bresp_count)) begin
     `uvm_error (get_type_name(), $sformatf ("Total number of packets from three channel of write are not same"));
   end
   else begin
