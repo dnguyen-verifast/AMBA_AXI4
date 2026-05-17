@@ -268,10 +268,10 @@ task axi4_slave_driver_proxy::axi4_write_task();
      //putting the write data into write data out fifo
      active_ids_q.push_back(struct_write_packet.awid);
      if(axi4_slave_agent_cfg_h.slave_response_mode == WRITE_READ_RESP_OUT_OF_ORDER || axi4_slave_agent_cfg_h.slave_response_mode == ONLY_WRITE_RESP_OUT_OF_ORDER) begin
-        if(associate_queue_OoO_A.exists(struct_write_packet.awid)) begin
+        if(associate_queue_OoO_W.exists(struct_write_packet.awid)) begin
           `uvm_info("OUT_OF_ORDER",$sformatf("Detected a same id = %d",struct_write_packet.awid),UVM_LOW);
         end
-        associate_queue_OoO_A[struct_write_packet.awid].push_back(local_slave_data_tx);
+        associate_queue_OoO_W[struct_write_packet.awid].push_back(local_slave_data_tx);
         recieved_data_count ++ ;
      end else begin axi4_slave_write_data_out_fifo_h.put(local_slave_data_tx); end
     
@@ -316,7 +316,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
       wait(recieved_data_count > axi4_slave_agent_cfg_h.get_minimum_transactions);
       random_index = $urandom_range(0, active_ids_q.size() - 1);
       chosen_id = active_ids_q[random_index];
-      local_slave_addr_tx = associate_queue_OoO_A[chosen_id].pop_front();
+      local_slave_addr_tx = associate_queue_OoO_W[chosen_id].pop_front();
       local_slave_data_tx = associate_queue_OoO_AW[chosen_id].pop_front();
       recieved_data_count -- ;
     end else begin 
