@@ -286,7 +286,7 @@ task axi4_slave_monitor_proxy::axi4_slave_read_address();
     axi4_slave_mon_bfm_h.axi4_read_address_sampling(struct_read_packet,struct_cfg);
     axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);
 
-// checking for address exceeding 4kb boundary
+    // checking for address exceeding 4kb boundary
     if(req_rd.arburst == READ_FIXED) begin
         end_wrap_addr =  req_rd.araddr;
       end
