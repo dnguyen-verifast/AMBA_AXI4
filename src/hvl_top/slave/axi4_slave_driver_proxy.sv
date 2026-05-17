@@ -211,7 +211,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
      axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_addr_tx);
 
      if(axi4_slave_agent_cfg_h.slave_response_mode == WRITE_READ_RESP_OUT_OF_ORDER || axi4_slave_agent_cfg_h.slave_response_mode == ONLY_WRITE_RESP_OUT_OF_ORDER) begin
-        if(associate_queue_OoO[struct_write_packet.awid].exists(struct_write_packet.awid)) begin
+        if(associate_queue_OoO.exists(struct_write_packet.awid)) begin
           `uvm_info("OUT_OF_ORDER",$sformatf("Detected a same id = %d",struct_write_packet.awid),UVM_LOW);
         end
         associate_queue_OoO[struct_write_packet.awid].push_back(local_slave_addr_tx);

@@ -539,7 +539,7 @@ function void axi4_slave_monitor_proxy::strobe_generation(axi4_slave_tx req);
         end 
         else begin
           if(i%2 == 0) begin
-            req.wstrb[i] = {(wstrb_local << 2**req.awsize)^req.awsize_1};
+            req.wstrb[i] = {(wstrb_local << 2**req.awsize)^awsize_1};
           end
           else begin
             req.wstrb[i] = (wstrb_local << 2**req.awsize);
