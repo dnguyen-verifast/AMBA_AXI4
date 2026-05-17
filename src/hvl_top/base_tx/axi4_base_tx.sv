@@ -69,7 +69,7 @@ class axi4_base_tx extends uvm_sequence_item;
 
   //Variable : wlast
   //Used to store the write last transfer
-  bit wlast;
+  rand bit wlast;
 
   //Variable : wuser
   //Used to send the user bit value
@@ -80,15 +80,15 @@ class axi4_base_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Variable : bid
   //Used to send the response id
-  bid_e bid;
+  rand bid_e bid;
 
   //Variable : bresp
   //Used to capture the write response of the trasnaction
-  bresp_e bresp;
+  rand bresp_e bresp;
   
   //Variable : buser
   //Used to capture the buser
-  bit buser;
+  rand bit buser;
 
   //-------------------------------------------------------
   // READ ADDRESS CHANNEL SIGNALS
@@ -142,25 +142,25 @@ class axi4_base_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Variable : rid
   //Used to send the read address id
-  rid_e rid;
+  rand rid_e rid;
   
   //Variable : rdata
   //Used to randomise read data
   //varaible[$] gives a unbounded queue
   //variable[$:value] gives a bounded queue to a value of given value 
-  bit [DATA_WIDTH-1:0] rdata [$:2**LENGTH];
+  rand bit [DATA_WIDTH-1:0] rdata [$:2**LENGTH];
 
   //Variable : rresp
   //Used to capture the read response of the trasnaction
-  rresp_e rresp;
+  rand rresp_e rresp;
 
   //Variable : rlast
   //Used to store the read last transfer
-  bit rlast;
+  rand bit rlast;
 
   //Variable : ruser
   //Used to read the read user value
-  bit ruser;
+  rand bit ruser;
   
   //Variable : endian
   //Used to differentiate the type of memory storage
@@ -177,6 +177,10 @@ class axi4_base_tx extends uvm_sequence_item;
   //Variable : no_of_wait_states
   //Used to count number of wait states
   rand int no_of_wait_states;
+
+  //Variable : compare_mode
+  //Used to determine the compare mode for the transaction
+  compare_mode_e compare_mode;
 
   //Variable: wait_count_write_address_channel
   //Used to determine wait count for write address channel
@@ -266,43 +270,88 @@ endfunction : do_copy
 
 function bit axi4_base_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   axi4_base_tx axi4_base_tx_compare_obj;
+  bit result; 
 
   if(!$cast(axi4_base_tx_compare_obj,rhs)) begin
-    `uvm_fatal("FATAL_axi_BASE_TX_DO_COMPARE_FAILED","cast of the rhs object failed")
+    `uvm_fatal("FATAL_AXI_BASE_TX_DO_COMPARE_FAILED","cast of the rhs object failed")
     return 0;
   end
-  
-  return super.do_compare(axi4_base_tx_compare_obj, comparer) &&
-  //WRITE ADDRESS CHANNEL
-  awid    == axi4_base_tx_compare_obj.awid    &&
-  awaddr  == axi4_base_tx_compare_obj.awaddr  &&
-  awlen   == axi4_base_tx_compare_obj.awlen   &&
-  awsize  == axi4_base_tx_compare_obj.awsize  &&
-  awburst == axi4_base_tx_compare_obj.awburst &&
-  awlock  == axi4_base_tx_compare_obj.awlock  &&
-  awcache == axi4_base_tx_compare_obj.awcache &&
-  awprot  == axi4_base_tx_compare_obj.awprot  &&
-  awqos   == axi4_base_tx_compare_obj.awqos   &&
-  //WRITE DATA CHANNEL
-  wdata == axi4_base_tx_compare_obj.wdata &&
-  wstrb == axi4_base_tx_compare_obj.wstrb &&
-  //WRITE RESPONSE CHANNEL
-  bid   == axi4_base_tx_compare_obj.bid   &&
-  bresp == axi4_base_tx_compare_obj.bresp &&
-  //READ ADDRESS CHANNEL
-  arid    == axi4_base_tx_compare_obj.arid    &&
-  araddr  == axi4_base_tx_compare_obj.araddr  &&
-  arlen   == axi4_base_tx_compare_obj.arlen   &&
-  arsize  == axi4_base_tx_compare_obj.arsize  &&
-  arburst == axi4_base_tx_compare_obj.arburst &&
-  arlock  == axi4_base_tx_compare_obj.arlock  &&
-  arcache == axi4_base_tx_compare_obj.arcache &&
-  arprot  == axi4_base_tx_compare_obj.arprot  &&
-  arqos   == axi4_base_tx_compare_obj.arqos   &&
-  //READ DATA CHANNEL
-  rid   == axi4_base_tx_compare_obj.rid   &&
-  rdata == axi4_base_tx_compare_obj.rdata &&
-  rresp == axi4_base_tx_compare_obj.rresp;
+  result = super.do_compare(axi4_base_tx_compare_obj, comparer);
+  case(compare_mode)
+    CHECK_WRITE_ADDRESS: begin
+      result &= (awaddr  == axi4_base_tx_compare_obj.awaddr)  &&   
+                (awid    == axi4_base_tx_compare_obj.awid)    &&
+                (awlen   == axi4_base_tx_compare_obj.awlen)   &&
+                (awsize  == axi4_base_tx_compare_obj.awsize)  &&
+                (awburst == axi4_base_tx_compare_obj.awburst) &&
+                (awlock  == axi4_base_tx_compare_obj.awlock)  &&
+                (awcache == axi4_base_tx_compare_obj.awcache) &&
+                (awqos   == axi4_base_tx_compare_obj.awqos)   &&
+                (awprot  == axi4_base_tx_compare_obj.awprot);
+    end
+
+    CHECK_WRITE_DATA: begin
+      result &= (wdata == axi4_base_tx_compare_obj.wdata) &&
+                (wstrb == axi4_base_tx_compare_obj.wstrb);
+    end
+
+    CHECK_WRITE_RESP: begin
+      result &= (bid   == axi4_base_tx_compare_obj.bid)   &&
+                (bresp == axi4_base_tx_compare_obj.bresp) &&
+                (buser == axi4_base_tx_compare_obj.buser);
+    end
+
+    CHECK_READ_ADDRESS: begin
+      result &= (araddr   == axi4_base_tx_compare_obj.araddr)   &&
+                (arid     == axi4_base_tx_compare_obj.arid)     &&
+                (arlen    == axi4_base_tx_compare_obj.arlen)    &&
+                (arsize   == axi4_base_tx_compare_obj.arsize)   &&
+                (arburst  == axi4_base_tx_compare_obj.arburst)  &&
+                (arlock   == axi4_base_tx_compare_obj.arlock)   &&
+                (arcache  == axi4_base_tx_compare_obj.arcache)  &&
+                (arqos    == axi4_base_tx_compare_obj.arqos)    &&
+                (arregion == axi4_base_tx_compare_obj.arregion) &&
+                (arprot   == axi4_base_tx_compare_obj.arprot);
+    end
+
+    CHECK_READ_DATA: begin
+      result &= (rid   == axi4_base_tx_compare_obj.rid)   &&  
+                (rdata == axi4_base_tx_compare_obj.rdata) && 
+                (rresp == axi4_base_tx_compare_obj.rresp) &&
+                (ruser == axi4_base_tx_compare_obj.ruser);
+    end
+
+    CHECK_ALL: begin
+      result &= (
+        //WRITE ADDRESS
+        awaddr == axi4_base_tx_compare_obj.awaddr && awid == axi4_base_tx_compare_obj.awid &&
+        awlen == axi4_base_tx_compare_obj.awlen && awsize == axi4_base_tx_compare_obj.awsize &&
+        awburst == axi4_base_tx_compare_obj.awburst && awlock == axi4_base_tx_compare_obj.awlock &&
+        awcache == axi4_base_tx_compare_obj.awcache && awqos == axi4_base_tx_compare_obj.awqos &&
+        awprot == axi4_base_tx_compare_obj.awprot &&
+        //WRITE DATA
+        wdata == axi4_base_tx_compare_obj.wdata && wstrb == axi4_base_tx_compare_obj.wstrb &&
+        //WRITE RESPONSE
+        bid == axi4_base_tx_compare_obj.bid && bresp == axi4_base_tx_compare_obj.bresp &&
+        buser == axi4_base_tx_compare_obj.buser &&
+        //READ ADDRESS
+        araddr == axi4_base_tx_compare_obj.araddr && arid == axi4_base_tx_compare_obj.arid &&
+        arlen == axi4_base_tx_compare_obj.arlen && arsize == axi4_base_tx_compare_obj.arsize &&
+        arburst == axi4_base_tx_compare_obj.arburst && arlock == axi4_base_tx_compare_obj.arlock &&
+        arcache == axi4_base_tx_compare_obj.arcache && arqos == axi4_base_tx_compare_obj.arqos &&
+        arregion== axi4_base_tx_compare_obj.arregion && arprot == axi4_base_tx_compare_obj.arprot &&
+        //READ DATA
+        rid == axi4_base_tx_compare_obj.rid && rdata == axi4_base_tx_compare_obj.rdata && 
+        rresp == axi4_base_tx_compare_obj.rresp && ruser == axi4_base_tx_compare_obj.ruser
+      );
+    end
+
+    NO_CHECK: begin
+      result = 1;
+    end
+  endcase
+  return result;
+
 endfunction : do_compare
 
 function void axi4_base_tx::do_print(uvm_printer printer);
