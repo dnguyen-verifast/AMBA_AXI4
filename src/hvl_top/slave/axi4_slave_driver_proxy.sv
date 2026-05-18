@@ -543,7 +543,16 @@ task axi4_slave_driver_proxy::axi4_read_task();
       else if (axi4_slave_agent_cfg_h.read_data_mode == SLAVE_MEM_MODE || axi4_slave_agent_cfg_h.read_data_mode == SLAVE_ERR_RESP_MODE && write_read_mode_h != ONLY_READ_DATA) begin
         semaphore_read_key.get(1);
         while((!memory_write_count.exists(local_slave_addr_chk_tx.araddr)) || (memory_write_count[local_slave_addr_chk_tx.araddr] == 0)) begin
-           `uvm_info(get_type_name(), $sformatf("waiting write_complete_event"), UVM_NONE); 
+           `uvm_info(get_type_name(), $sformatf("waiting write_complete_event"), UVM_NONE);
+        
+          if (memory_write_count.size() == 0) begin
+              `uvm_info(get_type_name(), "Mang memory_write_count dang TRONG (Empty)!", UVM_NONE);
+          end else begin
+              // Lặp qua tất cả các phần tử (key) đang có trong mảng
+              foreach (memory_write_count[addr]) begin
+                  `uvm_info(get_type_name(), $sformatf(" -> [Da Luu] Dia chi: 0x%0h | Count: %0d", addr, memory_write_count[addr]), UVM_NONE);
+              end
+          end 
           @(write_complete_event);
         end
        // wait(memory_write_count.exists(local_slave_addr_chk_tx.araddr) && memory_write_count[local_slave_addr_chk_tx.araddr] > 0);
