@@ -542,7 +542,7 @@ task axi4_slave_driver_proxy::axi4_read_task();
       end
       else if (axi4_slave_agent_cfg_h.read_data_mode == SLAVE_MEM_MODE || axi4_slave_agent_cfg_h.read_data_mode == SLAVE_ERR_RESP_MODE && write_read_mode_h != ONLY_READ_DATA) begin
         
-        while ((!memory_write_count.exists(local_slave_addr_chk_tx.araddr)) || (memory_write_count[local_slave_addr_chk_tx.araddr] == 0)) begin
+        if((!memory_write_count.exists(local_slave_addr_chk_tx.araddr)) || (memory_write_count[local_slave_addr_chk_tx.araddr] == 0)) begin
            `uvm_info(get_type_name(), $sformatf("waiting write_complete_event"), UVM_NONE); 
           //wait(write_complete_event.triggered);
         end
