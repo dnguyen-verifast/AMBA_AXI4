@@ -61,7 +61,7 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
 
   axi4_slave_tx associate_queue_OoO_AW [bit[3:0]] [$];
   axi4_slave_tx associate_queue_OoO_W [bit[3:0]] [$];
-  bit [3:0]     id_aw_chanel [$]
+  bit [3:0]     id_aw_chanel [$];
   bit [3:0]     active_ids_q [$];
   bit [3:0]     aw_to_w_id;
   int           random_index;
