@@ -229,7 +229,7 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RDATA[%0d]=%0h",i,rdata),UVM_HIGH)
       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON REQ.RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
       i++;
-      beat_read_count = i;
+      beat_read_count ++;
       if(req.rlast == 1) begin
        `uvm_info("FROM SLAVE MON BFM read data",$sformatf("Inside RLAST Read Data Packet  =%p",req),UVM_HIGH)
        i = 0;
