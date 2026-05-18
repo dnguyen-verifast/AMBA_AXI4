@@ -15,7 +15,7 @@ package axi4_slave_pkg;
 
   // Import axi4_globals_pkg 
   import axi4_globals_pkg::*;
-  `include "axi4_base_tx.sv"
+  import axi4_base_tx_pkg::*;
   //-------------------------------------------------------
   // Include all other files
   //-------------------------------------------------------
