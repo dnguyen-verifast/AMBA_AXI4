@@ -202,12 +202,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
 
       //Converting transactions into struct data type
       axi4_slave_seq_item_converter::from_write_class(req_wr,struct_write_packet);
-      if(!pending_write_addr.exists(req_wr.awaddr)) begin
-        pending_write_addr[req_wr.awaddr] = 1;
-        memory_write_count[req_wr.awaddr] = 0;
-      end else begin 
-        pending_write_addr[req_wr.awaddr] ++ ; 
-      end
+      
       `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_write_packet = \n %0p",struct_write_packet), UVM_HIGH); 
 
      //Converting configurations into struct config type
@@ -218,6 +213,13 @@ task axi4_slave_driver_proxy::axi4_write_task();
      axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
 
      axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_addr_tx);
+
+     if(!pending_write_addr.exists(local_slave_addr_tx.awaddr)) begin
+        pending_write_addr[local_slave_addr_tx.awaddr] = 1;
+        memory_write_count[local_slave_addr_tx.awaddr] = 0;
+      end else begin 
+        pending_write_addr[local_slave_addr_tx.awaddr] ++ ; 
+      end
 
      if(axi4_slave_agent_cfg_h.slave_response_mode == WRITE_READ_RESP_OUT_OF_ORDER || axi4_slave_agent_cfg_h.slave_response_mode == ONLY_WRITE_RESP_OUT_OF_ORDER) begin
         id_aw_chanel.push_back(struct_write_packet.awid);
