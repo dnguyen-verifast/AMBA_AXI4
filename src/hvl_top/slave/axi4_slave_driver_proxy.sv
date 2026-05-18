@@ -202,11 +202,11 @@ task axi4_slave_driver_proxy::axi4_write_task();
 
       //Converting transactions into struct data type
       axi4_slave_seq_item_converter::from_write_class(req_wr,struct_write_packet);
-      if(!pending_write_addr.exists(struct_write_packet.awaddr)) begin
-        pending_write_addr[struct_write_packet.awaddr] = 1;
-        memory_write_count[struct_write_packet.awaddr] = 0;
+      if(!pending_write_addr.exists(req_wr.awaddr)) begin
+        pending_write_addr[req_wr.awaddr] = 1;
+        memory_write_count[req_wr.awaddr] = 0;
       end else begin 
-        pending_write_addr[struct_write_packet.awaddr] ++ ; 
+        pending_write_addr[req_wr.awaddr] ++ ; 
       end
       `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_write_packet = \n %0p",struct_write_packet), UVM_HIGH); 
 
@@ -541,7 +541,7 @@ task axi4_slave_driver_proxy::axi4_read_task();
         `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: READ CHANNEL PACKET \n %p",struct_read_packet), UVM_NONE);
       end
       else if (axi4_slave_agent_cfg_h.read_data_mode == SLAVE_MEM_MODE || axi4_slave_agent_cfg_h.read_data_mode == SLAVE_ERR_RESP_MODE && write_read_mode_h != ONLY_READ_DATA) begin
-        
+        semaphore_read_key.get(1);
         if((!memory_write_count.exists(local_slave_addr_chk_tx.araddr)) || (memory_write_count[local_slave_addr_chk_tx.araddr] == 0)) begin
            `uvm_info(get_type_name(), $sformatf("waiting write_complete_event"), UVM_NONE); 
           //wait(write_complete_event.triggered);
@@ -561,7 +561,7 @@ task axi4_slave_driver_proxy::axi4_read_task();
           out_of_order_for_reads(struct_read_packet);
           `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_read_packet = \n %0p",struct_read_packet), UVM_NONE); 
         end
-        semaphore_read_key.get(1);
+        
         total_bytes = (local_slave_addr_chk_tx.arlen+1)*(2**(local_slave_addr_chk_tx.arsize));
         if(local_slave_addr_chk_tx.araddr inside {[axi4_slave_agent_cfg_h.min_address : axi4_slave_agent_cfg_h.max_address]}) begin : ADDR_INSIDE_SLAVE_MEM_RANGE
           if(local_slave_addr_chk_tx.arburst == READ_FIXED) begin
