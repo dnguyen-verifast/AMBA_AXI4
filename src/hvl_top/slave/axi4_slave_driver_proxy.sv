@@ -76,8 +76,8 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   axi4_read_transfer_char_s rd_response_id_cont_queue[$];
  
 
-  bit [3:0] pending_write_addr [int];
-  bit [3:0] memory_write_count [int];
+  bit [3:0] pending_write_addr [bit [ADDRESS_WIDTH -1:0]];
+  bit [3:0] memory_write_count [bit [ADDRESS_WIDTH -1:0]];
   event write_complete_event ;
   event read_complete_event ;
 
@@ -183,12 +183,6 @@ task axi4_slave_driver_proxy::axi4_write_task();
 
     axi_write_seq_item_port.get_next_item(req_wr);
     // associate for read and write crossing address
-    if(!pending_write_addr.exists(req_wr.awaddr)) begin
-      pending_write_addr[req_wr.awaddr] = 1;
-      memory_write_count[req_wr.awaddr] = 0;
-    end else begin 
-      pending_write_addr[req_wr.awaddr] ++ ; 
-    end
 
     // writting the req into write data and response fifo's
     axi4_slave_write_data_in_fifo_h.put(req_wr);
@@ -208,6 +202,12 @@ task axi4_slave_driver_proxy::axi4_write_task();
 
       //Converting transactions into struct data type
       axi4_slave_seq_item_converter::from_write_class(req_wr,struct_write_packet);
+      if(!pending_write_addr.exists(struct_write_packet.awaddr)) begin
+        pending_write_addr[struct_write_packet.awaddr] = 1;
+        memory_write_count[struct_write_packet.awaddr] = 0;
+      end else begin 
+        pending_write_addr[struct_write_packet.awaddr] ++ ; 
+      end
       `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_write_packet = \n %0p",struct_write_packet), UVM_HIGH); 
 
      //Converting configurations into struct config type
@@ -544,7 +544,7 @@ task axi4_slave_driver_proxy::axi4_read_task();
         
         while ((!memory_write_count.exists(local_slave_addr_chk_tx.araddr)) || (memory_write_count[local_slave_addr_chk_tx.araddr] == 0)) begin
            `uvm_info(get_type_name(), $sformatf("waiting write_complete_event"), UVM_NONE); 
-          @(write_complete_event);
+          wait(write_complete_event.triggered);
         end
 
         `uvm_info(get_type_name(), $sformatf("read Address exists in memory model "), UVM_NONE);
