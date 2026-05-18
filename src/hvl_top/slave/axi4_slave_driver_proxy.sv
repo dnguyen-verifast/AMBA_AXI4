@@ -232,7 +232,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
        axi4_slave_write_addr_fifo_h.put(local_slave_addr_tx);
       end
      end
-		`uvm_info("DEBUG_QUEUE_ID",$sformatf("response id queue: %p",response_id_queue),UVM_LOW);
+		//`uvm_info("DEBUG_QUEUE_ID",$sformatf("response id queue: %p",response_id_queue),UVM_LOW);
      //Converting struct into transaction data type
      `uvm_info("DEBUG_SLAVE_WRITE_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_addr_tx.sprint()), UVM_NONE);
    end
@@ -332,6 +332,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
       local_slave_addr_tx = associate_queue_OoO_AW[chosen_id].pop_front();
       local_slave_data_tx = associate_queue_OoO_W[chosen_id].pop_front();
       recieved_data_count -- ;
+      active_ids_q.delete(random_index);
     end else begin 
       `uvm_info("SLAVE_AGENT",$sformatf("Inside response IN_ORDER"),UVM_LOW);
        //check for fifo empty if not get the data 
@@ -382,7 +383,8 @@ task axi4_slave_driver_proxy::axi4_write_task();
                                         : ((violation_addr == 1)? ((local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_OKAY : WRITE_EXOKAY) 
                                           : (local_slave_addr_tx.awlock == WRITE_NORMAL_ACCESS)? WRITE_EXOKAY : WRITE_OKAY);
       // write response_task
-      local_slave_response_tx.bresp = local_slave_addr_tx.bresp;
+      //local_slave_response_tx.bresp = local_slave_addr_tx.bresp;
+      bid_local = local_slave_addr_tx.awid;
       axi4_slave_seq_item_converter::from_write_class(local_slave_response_tx,struct_write_packet);
       axi4_slave_drv_bfm_h.axi4_write_response_phase(struct_write_packet,struct_cfg,bid_local);
       `uvm_info("DEBUG_SLAVE_WDATA_PROXY", $sformatf("AFTER :: Reciving struct pkt from bfm \n %p",struct_write_packet), UVM_HIGH);
