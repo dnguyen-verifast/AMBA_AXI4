@@ -61,7 +61,9 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
 
   axi4_slave_tx associate_queue_OoO_AW [bit[3:0]] [$];
   axi4_slave_tx associate_queue_OoO_W [bit[3:0]] [$];
+  bit [3:0]     id_aw_chanel [$]
   bit [3:0]     active_ids_q [$];
+  bit [3:0]     aw_to_w_id;
   int           random_index;
   bit [3:0]     chosen_id;
   int           recieved_data_count=0;
@@ -216,6 +218,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
      axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_addr_tx);
 
      if(axi4_slave_agent_cfg_h.slave_response_mode == WRITE_READ_RESP_OUT_OF_ORDER || axi4_slave_agent_cfg_h.slave_response_mode == ONLY_WRITE_RESP_OUT_OF_ORDER) begin
+        id_aw_chanel.push_back(struct_write_packet.awid);
         if(associate_queue_OoO_AW.exists(struct_write_packet.awid)) begin
           `uvm_info("OUT_OF_ORDER",$sformatf("Detected a same id = %d",struct_write_packet.awid),UVM_LOW);
         end
@@ -267,7 +270,8 @@ task axi4_slave_driver_proxy::axi4_write_task();
      `uvm_info("DEBUG_SLAVE_WDATA_PROXY_TO_CLASS", $sformatf("AFTER TO CLASS :: Received req packet \n %s", local_slave_data_tx.sprint()), UVM_NONE);
 
      //putting the write data into write data out fifo
-     active_ids_q.push_back(struct_write_packet.awid);
+     aw_to_w_id = id_aw_chanel.pop_front();
+     active_ids_q.push_back(aw_to_w_id);
      if(axi4_slave_agent_cfg_h.slave_response_mode == WRITE_READ_RESP_OUT_OF_ORDER || axi4_slave_agent_cfg_h.slave_response_mode == ONLY_WRITE_RESP_OUT_OF_ORDER) begin
         if(associate_queue_OoO_W.exists(struct_write_packet.awid)) begin
           `uvm_info("OUT_OF_ORDER",$sformatf("Detected a same id = %d",struct_write_packet.awid),UVM_LOW);
@@ -317,12 +321,13 @@ task axi4_slave_driver_proxy::axi4_write_task();
       if(flag_to_read == 0) begin
         wait(recieved_data_count >= axi4_slave_agent_cfg_h.get_minimum_transactions);
         flag_to_read = 1;
+      end else begin
+        random_index = $urandom_range(0, active_ids_q.size() - 1);
+        chosen_id = active_ids_q[random_index];
+        local_slave_addr_tx = associate_queue_OoO_W[chosen_id].pop_front();
+        local_slave_data_tx = associate_queue_OoO_AW[chosen_id].pop_front();
+        recieved_data_count -- ;
       end
-      random_index = $urandom_range(0, active_ids_q.size() - 1);
-      chosen_id = active_ids_q[random_index];
-      local_slave_addr_tx = associate_queue_OoO_W[chosen_id].pop_front();
-      local_slave_data_tx = associate_queue_OoO_AW[chosen_id].pop_front();
-      recieved_data_count -- ;
     end else begin 
       `uvm_info("SLAVE_AGENT",$sformatf("Inside response IN_ORDER"),UVM_LOW);
        //check for fifo empty if not get the data 
