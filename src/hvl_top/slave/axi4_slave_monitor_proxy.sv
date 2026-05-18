@@ -216,7 +216,7 @@ task axi4_slave_monitor_proxy::axi4_slave_write_data();
     //Combining write address and write data packets
     
     //Checking total beat count with burst length to avoid any mismatch11
-    if(beat_count != req_wr.awlen) begin
+    if(beat_count != local_write_addr_packet.awlen) begin
       `uvm_error("SLAVE_MONITOR",$sformatf("Beat count is not equal to burst length. Marking as error beat_count = %0d",beat_count));
     end else begin
       `uvm_info("SLAVE_MONITOR",$sformatf("Beat count is equal to burst length."),UVM_LOW);
