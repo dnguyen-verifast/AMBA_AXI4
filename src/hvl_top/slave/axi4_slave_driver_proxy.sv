@@ -409,7 +409,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
       pending_write_addr[local_slave_addr_tx.awaddr] -- ;
       memory_write_count[local_slave_addr_tx.awaddr] ++ ;   
     end
-    -> write_complete_event;
+    //-> write_complete_event;
     semaphore_rsp_write_key.put(1);
   end
 
@@ -544,8 +544,9 @@ task axi4_slave_driver_proxy::axi4_read_task();
         
         while ((!memory_write_count.exists(local_slave_addr_chk_tx.araddr)) || (memory_write_count[local_slave_addr_chk_tx.araddr] == 0)) begin
            `uvm_info(get_type_name(), $sformatf("waiting write_complete_event"), UVM_NONE); 
-          wait(write_complete_event.triggered);
+          //wait(write_complete_event.triggered);
         end
+        wait(memory_write_count.exists(local_slave_addr_chk_tx.araddr) && memory_write_count[local_slave_addr_chk_tx.araddr] > 0);
 
         `uvm_info(get_type_name(), $sformatf("read Address exists in memory model "), UVM_NONE);
         //Converting transactions into struct data type
