@@ -411,6 +411,10 @@ function axi4_slave_tx axi4_slave_monitor_proxy::strobe_generation(axi4_slave_tx
   //-------------------------------------------------------
   // Narrow Transfers for alligned address
   //-------------------------------------------------------
+  req.wstrb.delete();
+  for(int i = 0; i <= req.awlen; i++) begin
+      req.wstrb.push_back(0); 
+  end
   if(req.awaddr % 2**req.awsize == 0) begin
     awsize_0 = 4'b0001;
     awsize_1 = 4'b1111;
