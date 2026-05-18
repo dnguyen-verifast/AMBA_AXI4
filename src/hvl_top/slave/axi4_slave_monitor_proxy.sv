@@ -52,7 +52,7 @@ class axi4_slave_monitor_proxy extends uvm_monitor;
   extern virtual task axi4_slave_write_response();
   extern virtual task axi4_slave_read_address();
   extern virtual task axi4_slave_read_data();
-  extern virtual function void strobe_generation(axi4_slave_tx req);
+  extern virtual  function axi4_slave_tx  strobe_generation(axi4_slave_tx req);
 
 endclass : axi4_slave_monitor_proxy
 
@@ -211,7 +211,7 @@ task axi4_slave_monitor_proxy::axi4_slave_write_data();
     //Getting the write address packet
     axi4_slave_write_address_fifo_h.get(local_write_addr_packet);
     `uvm_info(get_type_name(),$sformatf("ADDR_Packet received from fifo is \n %s",local_write_addr_packet.sprint()),UVM_LOW)   
-    strobe_generation(local_write_addr_packet);
+    local_write_addr_packet = strobe_generation(local_write_addr_packet);
     `uvm_info(get_type_name(),$sformatf("Strobe for ADDR_Packet received from fifo is \n %s",local_write_addr_packet.sprint()),UVM_LOW) 
     //Combining write address and write data packets
     
@@ -376,7 +376,7 @@ task axi4_slave_monitor_proxy::axi4_slave_read_data();
   end
 endtask
 
-function void axi4_slave_monitor_proxy::strobe_generation(axi4_slave_tx req);
+function axi4_slave_tx axi4_slave_monitor_proxy::strobe_generation(axi4_slave_tx req);
   bit[3:0] wstrb_local;
   bit[3:0] wstrb_size_0_local;
   bit[3:0] awsize_0;
@@ -645,7 +645,7 @@ if(req.awaddr % 2**req.awsize != 0) begin
    end
   end
 end
-
+return req;
 endfunction : strobe_generation
 
 `endif
