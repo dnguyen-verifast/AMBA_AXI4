@@ -186,7 +186,9 @@ task axi4_slave_driver_proxy::axi4_write_task();
     if(!pending_write_addr.exists(req_wr.awaddr)) begin
       pending_write_addr[req_wr.awaddr] = 1;
       memory_write_count[req_wr.awaddr] = 0;
-    end else begin pending_write_addr[req_wr.awaddr] ++ ; end
+    end else begin 
+      pending_write_addr[req_wr.awaddr] ++ ; 
+    end
 
     // writting the req into write data and response fifo's
     axi4_slave_write_data_in_fifo_h.put(req_wr);
@@ -273,12 +275,14 @@ task axi4_slave_driver_proxy::axi4_write_task();
      aw_to_w_id = id_aw_chanel.pop_front();
      active_ids_q.push_back(aw_to_w_id);
      if(axi4_slave_agent_cfg_h.slave_response_mode == WRITE_READ_RESP_OUT_OF_ORDER || axi4_slave_agent_cfg_h.slave_response_mode == ONLY_WRITE_RESP_OUT_OF_ORDER) begin
-        if(associate_queue_OoO_W.exists(struct_write_packet.awid)) begin
+        if(associate_queue_OoO_W.exists(aw_to_w_id)) begin
           `uvm_info("OUT_OF_ORDER",$sformatf("Detected a same id = %d",struct_write_packet.awid),UVM_LOW);
         end
-        associate_queue_OoO_W[struct_write_packet.awid].push_back(local_slave_data_tx);
+        associate_queue_OoO_W[aw_to_w_id].push_back(local_slave_data_tx);
         recieved_data_count ++ ;
-     end else begin axi4_slave_write_data_out_fifo_h.put(local_slave_data_tx); end
+     end else begin 
+        axi4_slave_write_data_out_fifo_h.put(local_slave_data_tx); 
+      end
     
       //putting back the semaphore key
       semaphore_write_key.put(1);
@@ -305,7 +309,8 @@ task axi4_slave_driver_proxy::axi4_write_task();
 		
      // axi4_slave_write_data_out_fifo_h.peek(local_slave_data_tx);
    //   wait(axi4_slave_write_data_out_fifo_h.used()>0);
-		data_tx.await();
+		wait(data_tx != null);
+    data_tx.await();
       //getting the data from response fifo
     axi4_slave_write_response_fifo_h.get(local_slave_response_tx);
       //Converting transactions into struct data type
@@ -324,8 +329,8 @@ task axi4_slave_driver_proxy::axi4_write_task();
       end else begin
         random_index = $urandom_range(0, active_ids_q.size() - 1);
         chosen_id = active_ids_q[random_index];
-        local_slave_addr_tx = associate_queue_OoO_W[chosen_id].pop_front();
-        local_slave_data_tx = associate_queue_OoO_AW[chosen_id].pop_front();
+        local_slave_addr_tx = associate_queue_OoO_AW[chosen_id].pop_front();
+        local_slave_data_tx = associate_queue_OoO_W[chosen_id].pop_front();
         recieved_data_count -- ;
       end
     end else begin 
