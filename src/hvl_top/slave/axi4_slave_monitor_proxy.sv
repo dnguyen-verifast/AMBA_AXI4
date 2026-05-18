@@ -212,11 +212,12 @@ task axi4_slave_monitor_proxy::axi4_slave_write_data();
     axi4_slave_write_address_fifo_h.get(local_write_addr_packet);
     `uvm_info(get_type_name(),$sformatf("ADDR_Packet received from fifo is \n %s",local_write_addr_packet.sprint()),UVM_LOW)   
     strobe_generation(local_write_addr_packet);
+    `uvm_info(get_type_name(),$sformatf("Strobe for ADDR_Packet received from fifo is \n %s",local_write_addr_packet.sprint()),UVM_LOW) 
     //Combining write address and write data packets
     
     //Checking total beat count with burst length to avoid any mismatch11
     if(beat_count != req_wr.awlen+1) begin
-      `uvm_error("SLAVE_MONITOR",$sformatf("Beat count is not equal to burst length. Marking as error"));
+      `uvm_error("SLAVE_MONITOR",$sformatf("Beat count is not equal to burst length. Marking as error beat_count = %0d",beat_count));
     end else begin
       `uvm_info("SLAVE_MONITOR",$sformatf("Beat count is equal to burst length."),UVM_LOW);
     end
@@ -358,7 +359,7 @@ task axi4_slave_monitor_proxy::axi4_slave_read_data();
     axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);
 
     if(beat_read_count != req_rd.arlen+1) begin
-      `uvm_error("SLAVE_MONITOR",$sformatf("Beat count is not equal to burst length. Marking as error"));
+      `uvm_error("SLAVE_MONITOR",$sformatf("Beat count is not equal to burst length. Marking as error beat_read_count = %0d",beat_read_count));
     end else begin
       `uvm_info("SLAVE_MONITOR",$sformatf("Beat count is equal to burst length."),UVM_LOW);
     end
@@ -432,141 +433,141 @@ function void axi4_slave_monitor_proxy::strobe_generation(axi4_slave_tx req);
     else begin
       wstrb_local = 4'b1100;
     end
-  end
+    end
   
-  if(req.awsize == 2) wstrb_local = 4'b1111;
-  `uvm_info(get_type_name(), $sformatf("DEBUG_LOCAL :: wstrb_local =  %0b",wstrb_local), UVM_HIGH); 
-  `uvm_info(get_type_name(), $sformatf("DEBUG_LOCL :: awsize =  %0d",req.awsize), UVM_HIGH); 
-  
-  wstrb_size_0_local = wstrb_local;
+    if(req.awsize == 2) wstrb_local = 4'b1111;
+    `uvm_info(get_type_name(), $sformatf("DEBUG_LOCAL :: wstrb_local =  %0b",wstrb_local), UVM_HIGH); 
+    `uvm_info(get_type_name(), $sformatf("DEBUG_LOCL :: awsize =  %0d",req.awsize), UVM_HIGH); 
+    
+    wstrb_size_0_local = wstrb_local;
 
-  //for loop to generate the strobe values based on strobe size
-  for(int i=0;i<req.wstrb.size();i++) begin
-    `uvm_info(get_type_name(),$sformatf("inside for loop of post randomize"),UVM_HIGH)
-    
-    if(req.awsize == 0) begin
-      if(remainder_check == 0)begin
-        if(i==0) begin
-          req.wstrb[0] = wstrb_local;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
-        end 
-        else begin
-          // since remainder is 0 it will be in 1st(0) lane
-          // so after every 4 transfers u need to assign wstrb(0)
-          if(i%4 == 0) begin
-            req.wstrb[i] = awsize_0;
+    //for loop to generate the strobe values based on strobe size
+    for(int i=0;i<req.wstrb.size();i++) begin
+      `uvm_info(get_type_name(),$sformatf("inside for loop of post randomize"),UVM_HIGH)
+      
+      if(req.awsize == 0) begin
+        if(remainder_check == 0)begin
+          if(i==0) begin
+            req.wstrb[0] = wstrb_local;
+            `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
+          end 
+          else begin
+            // since remainder is 0 it will be in 1st(0) lane
+            // so after every 4 transfers u need to assign wstrb(0)
+            if(i%4 == 0) begin
+              req.wstrb[i] = awsize_0;
+              wstrb_size_0_local = awsize_0;
+            end
+            else begin
+              wstrb_size_0_local = (wstrb_size_0_local << 2**req.awsize);
+              req.wstrb[i] = wstrb_size_0_local;
+            end
+            `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[%0d] =  %0b",i,req.wstrb[i]), UVM_HIGH); 
+            `uvm_info(get_type_name(),$sformatf("outside for loop of post randomize"),UVM_HIGH)
+          end
+        end
+        
+        // since remainder is 1 it will be in 2nd(1) lane
+        else if (remainder_check == 1) begin
+          if(i==0) begin
+            req.wstrb[0] = wstrb_local;
+            `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
+          end 
+          else if(i == 1) begin
+            req.wstrb[1] = req.wstrb[0] << i;
+          end
+          else if(i == 2) begin
+            req.wstrb[2] = req.wstrb[0] << i;
             wstrb_size_0_local = awsize_0;
           end
-          else begin
-            wstrb_size_0_local = (wstrb_size_0_local << 2**req.awsize);
+          else begin 
             req.wstrb[i] = wstrb_size_0_local;
+            wstrb_size_0_local = (wstrb_size_0_local << 2**req.awsize);
+            alligned_wstrb0_cnt++;
+            if(alligned_wstrb0_cnt == 4) begin
+              // so after every 4 transfers u need to assign awsize_0
+              wstrb_size_0_local = awsize_0;
+              alligned_wstrb0_cnt = 0;
+            end
           end
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[%0d] =  %0b",i,req.wstrb[i]), UVM_HIGH); 
-          `uvm_info(get_type_name(),$sformatf("outside for loop of post randomize"),UVM_HIGH)
-        end
-      end
-      
-      // since remainder is 1 it will be in 2nd(1) lane
-      else if (remainder_check == 1) begin
-        if(i==0) begin
-          req.wstrb[0] = wstrb_local;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
-        end 
-        else if(i == 1) begin
-          req.wstrb[1] = req.wstrb[0] << i;
-        end
-        else if(i == 2) begin
-          req.wstrb[2] = req.wstrb[0] << i;
-          wstrb_size_0_local = awsize_0;
-        end
-        else begin 
-          req.wstrb[i] = wstrb_size_0_local;
-          wstrb_size_0_local = (wstrb_size_0_local << 2**req.awsize);
-          alligned_wstrb0_cnt++;
-          if(alligned_wstrb0_cnt == 4) begin
-            // so after every 4 transfers u need to assign awsize_0
+        end  
+        
+        else if (remainder_check == 2) begin
+          if(i==0) begin
+            req.wstrb[0] = wstrb_local;
+            `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
+          end 
+          else if(i == 1) begin
+            req.wstrb[1] = req.wstrb[0] << i;
             wstrb_size_0_local = awsize_0;
-            alligned_wstrb0_cnt = 0;
           end
-        end
-      end  
-      
-      else if (remainder_check == 2) begin
-        if(i==0) begin
-          req.wstrb[0] = wstrb_local;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
-        end 
-        else if(i == 1) begin
-          req.wstrb[1] = req.wstrb[0] << i;
-          wstrb_size_0_local = awsize_0;
+          
+          else begin 
+            req.wstrb[i] = wstrb_size_0_local;
+            wstrb_size_0_local = (wstrb_size_0_local << 2**req.awsize);
+            alligned_wstrb0_cnt++;
+            if(alligned_wstrb0_cnt == 4) begin
+              wstrb_size_0_local = awsize_0;
+              alligned_wstrb0_cnt = 0;
+            end
+          end
         end
         
-        else begin 
-          req.wstrb[i] = wstrb_size_0_local;
-          wstrb_size_0_local = (wstrb_size_0_local << 2**req.awsize);
-          alligned_wstrb0_cnt++;
-          if(alligned_wstrb0_cnt == 4) begin
+        else if (remainder_check == 3) begin
+          if(i==0) begin
+            req.wstrb[0] = wstrb_local;
             wstrb_size_0_local = awsize_0;
-            alligned_wstrb0_cnt = 0;
+            `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
+          end 
+          
+          else begin 
+            req.wstrb[i] = wstrb_size_0_local;
+            wstrb_size_0_local = (wstrb_size_0_local << 2**req.awsize);
+            alligned_wstrb0_cnt++;
+            if(alligned_wstrb0_cnt == 4) begin
+              wstrb_size_0_local = awsize_0;
+              alligned_wstrb0_cnt = 0;
+            end
           end
         end
       end
       
-      else if (remainder_check == 3) begin
-        if(i==0) begin
-          req.wstrb[0] = wstrb_local;
-          wstrb_size_0_local = awsize_0;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
-        end 
+      else if(req.awsize == 1) begin
+        if(quotient_check_1 % 2**req.awsize == 0) begin 
+          if(i==0) begin
+            req.wstrb[0] = wstrb_local;
+            `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
+          end 
+          else begin
+            if(i%2 == 0) begin
+              req.wstrb[i] = {(wstrb_local << 2**req.awsize)^awsize_1};
+            end
+            else begin
+              req.wstrb[i] = (wstrb_local << 2**req.awsize);
+            end
+          end
+        end
         
-        else begin 
-          req.wstrb[i] = wstrb_size_0_local;
-          wstrb_size_0_local = (wstrb_size_0_local << 2**req.awsize);
-          alligned_wstrb0_cnt++;
-          if(alligned_wstrb0_cnt == 4) begin
-            wstrb_size_0_local = awsize_0;
-            alligned_wstrb0_cnt = 0;
-          end
-        end
-      end
-    end
-    
-    else if(req.awsize == 1) begin
-      if(quotient_check_1 % 2**req.awsize == 0) begin 
-        if(i==0) begin
-          req.wstrb[0] = wstrb_local;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
-        end 
         else begin
-          if(i%2 == 0) begin
-            req.wstrb[i] = {(wstrb_local << 2**req.awsize)^awsize_1};
-          end
+          if(i==0) begin
+            req.wstrb[0] = wstrb_local;
+            `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
+          end 
           else begin
-            req.wstrb[i] = (wstrb_local << 2**req.awsize);
+            if(i%2 == 0) begin
+              req.wstrb[i] = wstrb_local;
+            end
+            else begin
+              req.wstrb[i] = (wstrb_local >> 2**req.awsize);
+            end
           end
         end
       end
       
-      else begin
-        if(i==0) begin
-          req.wstrb[0] = wstrb_local;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",req.wstrb[0]), UVM_HIGH); 
-        end 
-        else begin
-          if(i%2 == 0) begin
-            req.wstrb[i] = wstrb_local;
-          end
-          else begin
-            req.wstrb[i] = (wstrb_local >> 2**req.awsize);
-          end
-        end
+      else if(req.awsize == 2) begin
+        req.wstrb[i] = wstrb_local;
       end
     end
-    
-    else if(req.awsize == 2) begin
-      req.wstrb[i] = wstrb_local;
-    end
-  end
 end
 
 
