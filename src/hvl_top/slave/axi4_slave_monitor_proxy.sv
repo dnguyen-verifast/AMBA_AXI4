@@ -203,7 +203,7 @@ task axi4_slave_monitor_proxy::axi4_slave_write_data();
     axi4_transfer_cfg_s        struct_cfg;
     axi4_slave_tx             req_wr_clone_packet;
     axi4_slave_tx             local_write_addr_packet;
-    int                       beat_count;
+    int                       beat_count = 0;
     axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h, struct_cfg);
     axi4_slave_mon_bfm_h.axi4_slave_write_data_sampling(struct_write_packet,struct_cfg,beat_count);
     axi4_slave_seq_item_converter::to_write_class(struct_write_packet,req_wr);
