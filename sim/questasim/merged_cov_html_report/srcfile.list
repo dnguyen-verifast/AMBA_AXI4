@@ -8,6 +8,8 @@
 ../../src/hdl_top/slave_agent_bfm/axi4_slave_driver_bfm.sv
 ../../src/hdl_top/slave_agent_bfm/axi4_slave_monitor_bfm.sv
 ../../src/hdl_top/slave_assertions.sv
+../../src/hvl_top/base_tx//axi4_base_tx.sv
+../../src/hvl_top/base_tx/axi4_base_tx_pkg.sv
 ../../src/hvl_top/env/axi4_env.sv
 ../../src/hvl_top/env/axi4_env_config.sv
 ../../src/hvl_top/env/axi4_env_pkg.sv

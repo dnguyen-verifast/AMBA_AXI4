@@ -196,13 +196,13 @@ task axi4_scoreboard::axi4_write_address();
   forever begin
     write_address_key.get(1);
     axi4_master_write_address_analysis_fifo.get(axi4_master_tx_h1);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address_channel \n%s",axi4_master_tx_h1.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address_channel \n%s",axi4_master_tx_h1.sprint()),UVM_LOW)
     axi4_slave_write_address_analysis_fifo.get(axi4_slave_tx_h1);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_address_channel \n%s",axi4_slave_tx_h1.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_address_channel \n%s",axi4_slave_tx_h1.sprint()),UVM_LOW)
 
     axi4_master_tx_h1.compare_mode = CHECK_WRITE_ADDRESS;
     axi4_slave_tx_h1.compare_mode = CHECK_WRITE_ADDRESS;
-    if(axi4_master_tx_h1.compare(axi4_slave_tx_h1)) begin
+    if(axi4_master_tx_h1.do_compare(axi4_slave_tx_h1,uvm_default_comparer)) begin
       `uvm_info("COMPARE_AW","Write Address comparision PASSED",UVM_HIGH)
     end
     else begin
@@ -233,7 +233,7 @@ task axi4_scoreboard::axi4_write_data();
 
     axi4_master_tx_h2.compare_mode = CHECK_WRITE_DATA;
     axi4_slave_tx_h2.compare_mode = CHECK_WRITE_DATA;
-    if(axi4_master_tx_h2.compare(axi4_slave_tx_h2)) begin
+    if(axi4_master_tx_h2.do_compare(axi4_slave_tx_h2,uvm_default_comparer)) begin
       `uvm_info("COMPARE_WD","Write Data comparision PASSED",UVM_HIGH)
     end
     else begin
@@ -264,7 +264,7 @@ task axi4_scoreboard::axi4_write_response();
 
     axi4_master_tx_h3.compare_mode = CHECK_WRITE_RESP;
     axi4_slave_tx_h3.compare_mode = CHECK_WRITE_RESP;
-    if(axi4_master_tx_h3.compare(axi4_slave_tx_h3)) begin
+    if(axi4_master_tx_h3.do_compare(axi4_slave_tx_h3,uvm_default_comparer)) begin
       `uvm_info("COMPARE_B","Write Response comparision PASSED",UVM_HIGH)
     end
     else begin
@@ -295,7 +295,7 @@ task axi4_scoreboard::axi4_read_address();
 
     axi4_master_tx_h4.compare_mode = CHECK_READ_ADDRESS;
     axi4_slave_tx_h4.compare_mode = CHECK_READ_ADDRESS;
-    if(axi4_master_tx_h4.compare(axi4_slave_tx_h4)) begin
+    if(axi4_master_tx_h4.do_compare(axi4_slave_tx_h4,uvm_default_comparer)) begin
       `uvm_info("COMPARE_AR","Read Address comparision PASSED",UVM_HIGH)
     end
     else begin
@@ -326,7 +326,7 @@ task axi4_scoreboard::axi4_read_data();
 
     axi4_master_tx_h5.compare_mode = CHECK_READ_DATA;
     axi4_slave_tx_h5.compare_mode = CHECK_READ_DATA;
-    if(axi4_master_tx_h5.compare(axi4_slave_tx_h5)) begin
+    if(axi4_master_tx_h5.do_compare(axi4_slave_tx_h5,uvm_default_comparer)) begin
       `uvm_info("COMPARE_R","Read Data comparision PASSED",UVM_HIGH)
     end
     else begin

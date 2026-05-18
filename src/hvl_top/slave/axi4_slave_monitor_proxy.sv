@@ -182,7 +182,7 @@ task axi4_slave_monitor_proxy::axi4_slave_write_address();
     end
 
     
-    axi4_slave_write_address_fifo_h.write(req_wr);
+    axi4_slave_write_address_fifo_h.put(req_wr);
 
     $cast(req_wr_clone_packet,req_wr.clone());    
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_slave_write_address_sampling is %s",req_wr_clone_packet.sprint()),UVM_HIGH)
@@ -210,7 +210,7 @@ task axi4_slave_monitor_proxy::axi4_slave_write_data();
     
     //Getting the write address packet
     axi4_slave_write_address_fifo_h.get(local_write_addr_packet);
-    `uvm_info(get_type_name(),$sformatf("ADDR_Packet received from fifo is \n %s",local_write_addr_packet.sprint()),UVM_HIGH)   
+    `uvm_info(get_type_name(),$sformatf("ADDR_Packet received from fifo is \n %s",local_write_addr_packet.sprint()),UVM_LOW)   
     strobe_generation(local_write_addr_packet);
     //Combining write address and write data packets
     
@@ -229,7 +229,7 @@ task axi4_slave_monitor_proxy::axi4_slave_write_data();
       end
     end
 
-    axi4_slave_write_data_fifo_h.write(req_wr);
+    axi4_slave_write_data_fifo_h.put(req_wr);
     //clone and publish the clone to the analysis port
     axi4_slave_seq_item_converter::to_write_addr_data_class(local_write_addr_packet,struct_write_packet,req_wr); 
     $cast(req_wr_clone_packet,req_wr.clone());
@@ -330,7 +330,7 @@ task axi4_slave_monitor_proxy::axi4_slave_read_address();
       `uvm_info("SLAVE_MONITOR",$sformatf("Transfer size is less than or equal to DATA_WIDTH."),UVM_LOW);
     end
 
-    axi4_slave_read_fifo_h.write(req_rd);
+    axi4_slave_read_fifo_h.get(req_rd);
 
     $cast(req_rd_clone_packet,req_rd.clone());
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_slave_read_address is \n %s",req_rd_clone_packet.sprint()),UVM_HIGH)

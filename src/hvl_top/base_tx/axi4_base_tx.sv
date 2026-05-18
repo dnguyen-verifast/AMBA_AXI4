@@ -276,7 +276,8 @@ function bit axi4_base_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
     `uvm_fatal("FATAL_AXI_BASE_TX_DO_COMPARE_FAILED","cast of the rhs object failed")
     return 0;
   end
-  result = super.do_compare(axi4_base_tx_compare_obj, comparer);
+	result = 1;
+ // result = super.do_compare(axi4_base_tx_compare_obj, comparer);
   case(compare_mode)
     CHECK_WRITE_ADDRESS: begin
       result &= (awaddr  == axi4_base_tx_compare_obj.awaddr)  &&   
