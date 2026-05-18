@@ -224,7 +224,7 @@ task axi4_slave_monitor_proxy::axi4_slave_write_data();
     // checking for trobe mismatch with address and size
     for (int i = 0; i < local_write_addr_packet.awlen+1; i++) begin
       if(local_write_addr_packet.wstrb[i] != req_wr.wstrb[i]) begin
-        `uvm_error("SLAVE_MONITOR",$sformatf("Wstrb[%0d] mismatch with address and size. Marking as error",i));
+        `uvm_error("SLAVE_MONITOR",$sformatf("Wstrb[%0d] mismatch with address and size. Marking as error local_write_addr_packet.wstrb = %0h != req_wr.wstrb = %0h",i,local_write_addr_packet.wstrb[i],req_wr.wstrb[i]));
       end else begin
         `uvm_info("SLAVE_MONITOR",$sformatf("Wstrb is consistent with address and size."),UVM_LOW);
       end
