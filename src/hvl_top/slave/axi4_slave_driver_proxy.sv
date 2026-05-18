@@ -326,13 +326,12 @@ task axi4_slave_driver_proxy::axi4_write_task();
       if(flag_to_read == 0) begin
         wait(recieved_data_count >= axi4_slave_agent_cfg_h.get_minimum_transactions);
         flag_to_read = 1;
-      end else begin
-        random_index = $urandom_range(0, active_ids_q.size() - 1);
-        chosen_id = active_ids_q[random_index];
-        local_slave_addr_tx = associate_queue_OoO_AW[chosen_id].pop_front();
-        local_slave_data_tx = associate_queue_OoO_W[chosen_id].pop_front();
-        recieved_data_count -- ;
       end
+      random_index = $urandom_range(0, active_ids_q.size() - 1);
+      chosen_id = active_ids_q[random_index];
+      local_slave_addr_tx = associate_queue_OoO_AW[chosen_id].pop_front();
+      local_slave_data_tx = associate_queue_OoO_W[chosen_id].pop_front();
+      recieved_data_count -- ;
     end else begin 
       `uvm_info("SLAVE_AGENT",$sformatf("Inside response IN_ORDER"),UVM_LOW);
        //check for fifo empty if not get the data 
